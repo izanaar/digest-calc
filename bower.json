@@ -16,7 +16,6 @@
   ],
   "devDependencies": {
     "angular-material": "~1.0.7",
-    "angular-route": "~1.5.3",
     "roboto-fontface": "~0.4.5"
   }
 }

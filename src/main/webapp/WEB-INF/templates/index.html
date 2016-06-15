@@ -15,6 +15,7 @@
     <script src="/bower_components/angular-material/angular-material.js" type="text/javascript"></script>
 
     <script src="/scr/app.js" type="text/javascript"></script>
+    <script src="/scr/digest/digest.js" type="text/javascript"></script>
 </head>
 <body ng-app="digestApp" layout="column">
 
@@ -26,16 +27,17 @@
     </h5>
 </md-toolbar>
 
-<div flex="" layout="row">
 
-    <md-sidenav md-is-locked-open="true" class="md-whiteframe-z5"></md-sidenav>
-
-    <md-content flex="" id="content">
-        <div ng-controller="indexController">
-            {{greeting}}
+<md-content class="md-whiteframe-2dp" layout="column" id="content">
+    <div layout="row">
+        <h3 flex="nogrow">Your tasks: </h3>
+        <div flex="auto" layout="row" layout-align="end center">
+            <md-button class="md-raised">Button</md-button>
         </div>
-    </md-content>
+    </div>
+    <div>
 
-</div>
+    </div>
+</md-content>
 </body>
 </html>

@@ -1,10 +1,5 @@
 var digestApp = angular.module('digestApp',[
-    'ngMaterial',
-    'ngRoute'
+    'ngMaterial'
 ]);
 
-
-digestApp.controller('indexController', function ($scope) {
-   $scope.greeting = "Hi there.";
-});
 
