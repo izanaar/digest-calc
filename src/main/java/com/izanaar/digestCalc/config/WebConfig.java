@@ -16,7 +16,7 @@ import org.thymeleaf.templateresolver.TemplateResolver;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackageClasses = IndexController.class)
-public class WebConfig extends WebMvcConfigurerAdapter {
+public class WebConfig extends WebMvcConfigurerAdapter{
 
     @Bean
     public SpringTemplateEngine templateEngine(TemplateResolver templateResolver) {
