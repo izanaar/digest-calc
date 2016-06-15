@@ -5,7 +5,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
@@ -14,7 +16,7 @@ import org.thymeleaf.templateresolver.TemplateResolver;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackageClasses = IndexController.class)
-public class WebConfig {
+public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public SpringTemplateEngine templateEngine(TemplateResolver templateResolver) {
@@ -38,6 +40,12 @@ public class WebConfig {
         ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
         viewResolver.setTemplateEngine(templateEngine);
         return viewResolver;
+    }
+
+    @Override
+    public void configureDefaultServletHandling(
+            DefaultServletHandlerConfigurer configurer) {
+        configurer.enable();
     }
 
 }

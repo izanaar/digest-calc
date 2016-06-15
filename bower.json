@@ -1,0 +1,22 @@
+{
+  "name": "digest-calc",
+  "authors": [
+    "traum <theierus@gmail.com>"
+  ],
+  "description": "calculates digest",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "angular-material": "~1.0.7",
+    "angular-route": "~1.5.3",
+    "roboto-fontface": "~0.4.5"
+  }
+}
