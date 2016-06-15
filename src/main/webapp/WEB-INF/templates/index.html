@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8"/>
     <title>Index</title>
@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="/bower_components/angular-material/angular-material.css"/>
     <link rel="stylesheet" href="/css/app.css"/>
 
-    <script type="text/javascript" src="/bower_components/angular/angular.js"></script>
-    <script src="/bower_components/angular-route/angular-route.js"  type="text/javascript"></script>
+    <script src="/bower_components/angular/angular.js" type="text/javascript"></script>
+    <script src="/bower_components/angular-route/angular-route.js" type="text/javascript"></script>
     <script src="/bower_components/angular-animate/angular-animate.js" type="text/javascript"></script>
     <script src="/bower_components/angular-aria/angular-aria.js" type="text/javascript"></script>
     <script src="/bower_components/angular-material/angular-material.js" type="text/javascript"></script>
@@ -18,8 +18,12 @@
 </head>
 <body ng-app="digestApp" layout="column">
 
-<md-toolbar layout="row" >
-    <h2>Digest calculator</h2>
+<md-toolbar layout="row" id="toolbar">
+    <h2 flex="nogrow">Digest calculator</h2>
+    <h5 flex="auto" layout="row" layout-align="end center">
+        <span>Your ID: </span>
+        <span th:text="${beans.uuid.value}"></span>
+    </h5>
 </md-toolbar>
 
 <div flex="" layout="row">
