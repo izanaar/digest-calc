@@ -13,15 +13,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.MultiValueMap;
 
+import java.net.URL;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -67,5 +68,22 @@ public class TaskControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(content().json(new ObjectMapper().writeValueAsString(expectedTask)));
+    }
+
+    @Test
+    public void testSuccessfulAddingTask() throws Exception {
+        final Algo algo = Algo.SHA256;
+        final URL url = new URL("file:///opt/web/file.txt");
+
+        mockMvc
+                .perform(post("/task")
+                .param("algo", algo.toString())
+                .param("srcUrl", url.toString()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testTaskConstraints() throws Exception {
+
     }
 }

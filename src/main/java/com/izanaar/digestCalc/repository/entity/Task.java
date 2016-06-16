@@ -4,6 +4,7 @@ import com.izanaar.digestCalc.repository.enums.Algo;
 import com.sun.istack.internal.NotNull;
 
 import javax.persistence.*;
+import java.net.URL;
 import java.util.Date;
 
 @Entity
@@ -23,6 +24,9 @@ public class Task {
 
     private Date endDate;
 
+    @NotNull
+    private URL srcUrl;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -34,7 +38,8 @@ public class Task {
         if (uuid != null ? !uuid.equals(task.uuid) : task.uuid != null) return false;
         if (algo != task.algo) return false;
         if (startDate != null ? !startDate.equals(task.startDate) : task.startDate != null) return false;
-        return endDate != null ? endDate.equals(task.endDate) : task.endDate == null;
+        if (endDate != null ? !endDate.equals(task.endDate) : task.endDate != null) return false;
+        return srcUrl != null ? srcUrl.equals(task.srcUrl) : task.srcUrl == null;
 
     }
 
@@ -45,6 +50,7 @@ public class Task {
         result = 31 * result + (algo != null ? algo.hashCode() : 0);
         result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
         result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
+        result = 31 * result + (srcUrl != null ? srcUrl.hashCode() : 0);
         return result;
     }
 
@@ -56,6 +62,7 @@ public class Task {
                 ", algo=" + algo +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
+                ", srcUrl=" + srcUrl +
                 '}';
     }
 
@@ -107,5 +114,13 @@ public class Task {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public URL getSrcUrl() {
+        return srcUrl;
+    }
+
+    public void setSrcUrl(URL srcUrl) {
+        this.srcUrl = srcUrl;
     }
 }
