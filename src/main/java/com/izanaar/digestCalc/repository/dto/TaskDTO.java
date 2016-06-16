@@ -1,6 +1,5 @@
 package com.izanaar.digestCalc.repository.dto;
 
-import com.izanaar.digestCalc.repository.entity.StackTrace;
 import com.izanaar.digestCalc.repository.entity.Task;
 import com.izanaar.digestCalc.repository.enums.Algo;
 
@@ -81,8 +80,8 @@ public class TaskDTO{
         this.errorMsg = errorMsg;
     }
 
-    public TaskDTO(Task task, StackTrace stackTrace){
-        this(task.getId(), task.getUuid(), task.getAlgo(), task.getStartDate(), task.getEndDate(), task.getSrcUrl(), stackTrace.getText());
+    public TaskDTO(Task task){
+        this(task.getId(), task.getUuid(), task.getAlgo(), task.getStartDate(), task.getEndDate(), task.getSrcUrl(), null);
     }
 
     public Long getId() {

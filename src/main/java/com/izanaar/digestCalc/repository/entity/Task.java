@@ -25,6 +25,8 @@ public class Task {
 
     private URL srcUrl;
 
+    private String stackTrace;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
