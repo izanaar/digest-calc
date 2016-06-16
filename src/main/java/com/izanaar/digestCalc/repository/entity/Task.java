@@ -17,14 +17,12 @@ public class Task {
     private String uuid;
 
     @Enumerated(value = EnumType.STRING)
-    @NotNull
     private Algo algo;
 
     private Date startDate;
 
     private Date endDate;
 
-    @NotNull
     private URL srcUrl;
 
     @Override

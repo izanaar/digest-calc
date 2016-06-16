@@ -13,12 +13,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.net.URL;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -75,6 +74,8 @@ public class TaskControllerTest {
         final Algo algo = Algo.SHA256;
         final URL url = new URL("file:///opt/web/file.txt");
 
+
+
         mockMvc
                 .perform(post("/task")
                 .param("algo", algo.toString())
@@ -84,6 +85,23 @@ public class TaskControllerTest {
 
     @Test
     public void testTaskConstraints() throws Exception {
+        final Algo algo = Algo.SHA256;
+        final URL url = new URL("file:///opt/web/file.txt");
 
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
+        mockMvc
+                .perform(post("/task").params(params))
+                .andExpect(status().isBadRequest());
+
+        params.add("algo",algo.toString());
+        mockMvc
+                .perform(post("/task").params(params))
+                .andExpect(status().isBadRequest());
+
+        params.add("srcUrl", url.toString());
+        mockMvc
+                .perform(post("/task").params(params))
+                .andExpect(status().isOk());
     }
 }

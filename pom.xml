@@ -122,6 +122,15 @@
             <version>2.5.0</version>
         </dependency>
 
+        <!--Validation-->
+        <!-- http://mvnrepository.com/artifact/javax.validation/validation-api -->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>1.0.0.GA</version>
+        </dependency>
+
+
         <!--Test-->
         <dependency>
             <groupId>junit</groupId>
@@ -148,11 +157,11 @@
             <scope>test</scope>
         </dependency>
 
-        <!--<dependency>
+        <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.4</version>
-        </dependency>-->
+            <version>1.10</version>
+        </dependency>
 
     </dependencies>
 </project>
