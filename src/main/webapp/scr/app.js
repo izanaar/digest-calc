@@ -1,5 +1,5 @@
 var digestApp = angular.module('digestApp',[
-    'ngMaterial'
+    'ui.bootstrap'
 ]);
 
 

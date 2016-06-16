@@ -1,20 +1,7 @@
-#toolbar h2 {
-    padding-left: 20px;
+.content {
+    margin-top: 20px;
 }
 
-#toolbar h5 {
-    padding-right: 20px;
-}
-
-#content {
-    padding-top: 15px;
-    padding-bottom: 15px;
-}
-
-#content div{
-    margin: 5px 15px 5px 15px;
-}
-
-.bkgrnd {
-    background-color: rgba(245, 230, 211, 0.51);
+.new-task{
+    padding-top: 7px;
 }
