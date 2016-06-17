@@ -4,6 +4,6 @@ public interface TaskStatusListener {
 
     void notifySuccess(Long id, String hex);
 
-    void notifyFauilure(Long id, String stackTrace);
+    void notifyFailure(Long id, String stackTrace);
 
 }

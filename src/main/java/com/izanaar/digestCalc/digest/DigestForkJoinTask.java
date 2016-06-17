@@ -1,5 +1,8 @@
 package com.izanaar.digestCalc.digest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.net.URL;
 import java.util.concurrent.RecursiveAction;
@@ -8,11 +11,13 @@ import java.util.function.Function;
 
 public class DigestForkJoinTask extends RecursiveAction {
 
-    private Function <byte[], String> performer;
+    private Function<byte[], String> performer;
     private URL source;
     private AtomicBoolean operationStarted;
     private TaskStatusListener statusListener;
     private Long taskId;
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     DigestForkJoinTask(URL source, TaskStatusListener statusListener, Long taskId) {
         this.source = source;
@@ -31,6 +36,10 @@ public class DigestForkJoinTask extends RecursiveAction {
         this.performer = performer;
     }
 
+    public Long getTaskId() {
+        return taskId;
+    }
+
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
         return !operationStarted.get() && super.cancel(mayInterruptIfRunning);
@@ -38,13 +47,16 @@ public class DigestForkJoinTask extends RecursiveAction {
 
     @Override
     protected void compute() {
-        System.out.println("CCCC");
+        logger.trace("Hex calculation for task {} has started.", taskId);
         try {
             InputStream stream = source.openStream();
             byte[] bytes = readStream(stream);
-            statusListener.notifySuccess(taskId, performer.apply(bytes));
+            String hex = performer.apply(bytes);
+            logger.trace("Hex calculation for task {} has ended.", taskId);
+            statusListener.notifySuccess(taskId, hex);
         } catch (IOException e) {
-            statusListener.notifyFauilure(taskId, getStackTrace(e));
+            logger.error("Hex calculation for task {} has failed.", taskId);
+            statusListener.notifyFailure(taskId, getStackTrace(e));
         }
     }
 
@@ -54,7 +66,7 @@ public class DigestForkJoinTask extends RecursiveAction {
         return bytes;
     }
 
-    private String getStackTrace(Exception e){
+    private String getStackTrace(Exception e) {
         Writer eWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(eWriter);
         e.printStackTrace(writer);
