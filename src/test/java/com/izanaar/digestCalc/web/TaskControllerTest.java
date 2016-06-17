@@ -2,6 +2,7 @@ package com.izanaar.digestCalc.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.izanaar.digestCalc.repository.entity.Task;
+import com.izanaar.digestCalc.repository.entity.TaskDTO;
 import com.izanaar.digestCalc.repository.enums.Algo;
 import com.izanaar.digestCalc.service.TaskService;
 import org.junit.Before;

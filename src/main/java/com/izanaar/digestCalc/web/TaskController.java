@@ -1,6 +1,7 @@
 package com.izanaar.digestCalc.web;
 
 import com.izanaar.digestCalc.repository.entity.Task;
+import com.izanaar.digestCalc.repository.entity.TaskDTO;
 import com.izanaar.digestCalc.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +23,7 @@ public class TaskController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody Task addTask(@Valid Task task){
+    public @ResponseBody TaskDTO addTask(@Valid TaskDTO task){
         System.out.println(task);
         return task;
     }
