@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class DigestForkJoinTaskTest {
+public class DigestRecursiveActionTest {
 
     private final Function<byte[], String>
             performer,
@@ -26,7 +26,7 @@ public class DigestForkJoinTaskTest {
 
     private final URL fileUrl;
 
-    public DigestForkJoinTaskTest() throws MalformedURLException {
+    public DigestRecursiveActionTest() throws MalformedURLException {
         fileUrl = new URL("file:///home/traum/file");
 
         delayPerformer = (array) -> {
@@ -52,7 +52,7 @@ public class DigestForkJoinTaskTest {
 
         TaskStatusListener statusListener = getSuccessStatusListener(testContent, testTaskID);
 
-        DigestForkJoinTask task = new DigestForkJoinTask(performer, url, statusListener, testTaskID);
+        DigestRecursiveAction task = new DigestRecursiveAction(performer, url, statusListener, testTaskID);
         task.compute();
     }
 
@@ -96,8 +96,8 @@ public class DigestForkJoinTaskTest {
 
         TaskStatusListener statusListener = getErrorStatusListener("FileNotFoundException", testTaskId);
 
-        DigestForkJoinTask task = new DigestForkJoinTask(performer, url, statusListener, testTaskId);
-        task.compute();
+        DigestRecursiveAction task = new DigestRecursiveAction(performer, url, statusListener, testTaskId);
+        task.invoke();
     }
 
     private TaskStatusListener getErrorStatusListener(String expectedStackTracePart, Long expectedId) {
@@ -117,10 +117,10 @@ public class DigestForkJoinTaskTest {
 
     @Test
     public void testCancel() throws Exception {
-        UnaryOperator<DigestForkJoinTask> streamIterateOperator = this::iterateOperator;
+        UnaryOperator<DigestRecursiveAction> streamIterateOperator = this::iterateOperator;
 
-        List<DigestForkJoinTask> tasks = Stream
-                .iterate(new DigestForkJoinTask(delayPerformer, fileUrl, getEmptyListener(), 1L), streamIterateOperator)
+        List<DigestRecursiveAction> tasks = Stream
+                .iterate(new DigestRecursiveAction(delayPerformer, fileUrl, getEmptyListener(), 1L), streamIterateOperator)
                 .limit(3)
                 .collect(Collectors.toList());
 
@@ -128,23 +128,30 @@ public class DigestForkJoinTaskTest {
 
         tasks.forEach(singlePool::execute);
         Thread.sleep(100);
-        DigestForkJoinTask cancellableTask = tasks.get(0);
-        //assertFalse(cancellableTask.cancel(true));
-        System.out.println(cancellableTask.cancel(true));
+        DigestRecursiveAction cancellableTask = tasks.get(0);
+        assertFalse(cancellableTask.cancel(true));
 
-        DigestForkJoinTask cancelledTask = tasks.get(1);
+        DigestRecursiveAction cancelledTask = tasks.get(1);
         assertTrue(cancelledTask.cancel(true));
         Thread.sleep(700);
-        System.out.println();
+
+        DigestRecursiveAction completedTask = tasks.get(2);
+        assertTrue(completedTask.isCompletedNormally() && completedTask.isDone());
+
+        assertTrue(cancellableTask.isDone() && cancellableTask.isCompletedNormally());
+
+        assertTrue(cancelledTask.isDone() && cancelledTask.isCompletedAbnormally());
+
+
     }
 
-    private DigestForkJoinTask iterateOperator(DigestForkJoinTask oldTask) {
-        Long oldId = (Long) ReflectionTestUtils.getField(oldTask, DigestForkJoinTask.class, "taskId");
-        DigestForkJoinTask newTask = new DigestForkJoinTask(delayPerformer, fileUrl, getEmptyListener(), ++oldId);
+    private DigestRecursiveAction iterateOperator(DigestRecursiveAction oldTask) {
+        Long oldId = (Long) ReflectionTestUtils.getField(oldTask, DigestRecursiveAction.class, "taskId");
+        DigestRecursiveAction newTask = new DigestRecursiveAction(delayPerformer, fileUrl, getEmptyListener(), ++oldId);
         return newTask;
     }
 
-    public TaskStatusListener getEmptyListener() {
+    private TaskStatusListener getEmptyListener() {
         return new TaskStatusListener() {
             @Override
             public void notifySuccess(Long id, String hex) {

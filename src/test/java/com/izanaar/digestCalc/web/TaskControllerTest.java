@@ -5,6 +5,7 @@ import com.izanaar.digestCalc.repository.entity.Task;
 import com.izanaar.digestCalc.repository.enums.Algo;
 import com.izanaar.digestCalc.service.TaskService;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -36,16 +38,20 @@ public class TaskControllerTest {
 
     private MockMvc mockMvc;
 
+    private URL testUrl;
+
+
     @Before
     public void setUp() throws Exception {
         mockMvc = MockMvcBuilders
                 .standaloneSetup(taskController)
                 .build();
+        testUrl = new URL("file:///opt/somefile");
     }
 
     @Test
     public void testGetAll() throws Exception {
-        final List<Task> tasks = Collections.singletonList(new Task("fafaw-xq", Algo.MD5, new Date(), new Date()));
+        final List<Task> tasks = Collections.singletonList(new Task(testUrl, Algo.MD5, new Date(), new Date()));
         when(taskService.getAll()).thenReturn(tasks);
 
         mockMvc
@@ -57,7 +63,7 @@ public class TaskControllerTest {
 
     @Test
     public void getById() throws Exception {
-        final Task expectedTask = new Task("ffafqtttq-x1", Algo.SHA256, new Date(), new Date());
+        final Task expectedTask = new Task(testUrl, Algo.SHA256, new Date(), new Date());
         long id = 55L;
 
         when(taskService.getById(id)).thenReturn(expectedTask);
@@ -73,8 +79,6 @@ public class TaskControllerTest {
     public void testSuccessfulAddingTask() throws Exception {
         final Algo algo = Algo.SHA256;
         final URL url = new URL("file:///opt/web/file.txt");
-
-
 
         mockMvc
                 .perform(post("/task")

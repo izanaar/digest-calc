@@ -9,7 +9,7 @@ import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
-public class DigestForkJoinTask extends RecursiveAction {
+public class DigestRecursiveAction extends RecursiveAction {
 
     private Function<byte[], String> performer;
     private URL source;
@@ -19,14 +19,14 @@ public class DigestForkJoinTask extends RecursiveAction {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    DigestForkJoinTask(URL source, TaskStatusListener statusListener, Long taskId) {
+    DigestRecursiveAction(URL source, TaskStatusListener statusListener, Long taskId) {
         this.source = source;
         this.statusListener = statusListener;
         this.taskId = taskId;
     }
 
-    public DigestForkJoinTask(Function<byte[], String> performer, URL source,
-                              TaskStatusListener statusListener, Long taskId) {
+    public DigestRecursiveAction(Function<byte[], String> performer, URL source,
+                                 TaskStatusListener statusListener, Long taskId) {
         this(source, statusListener, taskId);
         this.performer = performer;
         operationStarted = new AtomicBoolean(false);
@@ -38,14 +38,13 @@ public class DigestForkJoinTask extends RecursiveAction {
 
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
-        boolean isCancelled = !operationStarted.get() && super.cancel(mayInterruptIfRunning);
-        return isCancelled;
+        return !operationStarted.get() && super.cancel(mayInterruptIfRunning);
     }
 
     @Override
     protected void compute() {
         logger.trace("Hex calculation for task {} has started.", taskId);
-
+        operationStarted.set(true);
         try {
             InputStream stream = source.openStream();
             byte[] bytes = readStream(stream);
@@ -76,7 +75,7 @@ public class DigestForkJoinTask extends RecursiveAction {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        DigestForkJoinTask that = (DigestForkJoinTask) o;
+        DigestRecursiveAction that = (DigestRecursiveAction) o;
 
         if (performer != null ? !performer.equals(that.performer) : that.performer != null) return false;
         if (source != null ? !source.equals(that.source) : that.source != null) return false;
@@ -84,7 +83,8 @@ public class DigestForkJoinTask extends RecursiveAction {
             return false;
         if (statusListener != null ? !statusListener.equals(that.statusListener) : that.statusListener != null)
             return false;
-        return taskId != null ? taskId.equals(that.taskId) : that.taskId == null;
+        if (taskId != null ? !taskId.equals(that.taskId) : that.taskId != null) return false;
+        return logger != null ? logger.equals(that.logger) : that.logger == null;
 
     }
 
@@ -95,12 +95,13 @@ public class DigestForkJoinTask extends RecursiveAction {
         result = 31 * result + (operationStarted != null ? operationStarted.hashCode() : 0);
         result = 31 * result + (statusListener != null ? statusListener.hashCode() : 0);
         result = 31 * result + (taskId != null ? taskId.hashCode() : 0);
+        result = 31 * result + (logger != null ? logger.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "DigestForkJoinTask{" +
+        return "DigestRecursiveAction{" +
                 "performer=" + performer +
                 ", source=" + source +
                 ", operationStarted=" + operationStarted +
