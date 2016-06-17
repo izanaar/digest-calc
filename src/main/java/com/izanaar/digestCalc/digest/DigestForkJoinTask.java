@@ -36,18 +36,16 @@ public class DigestForkJoinTask extends RecursiveAction {
         this.performer = performer;
     }
 
-    public Long getTaskId() {
-        return taskId;
-    }
-
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
-        return !operationStarted.get() && super.cancel(mayInterruptIfRunning);
+        boolean isCancelled = !operationStarted.get() && super.cancel(mayInterruptIfRunning);
+        return isCancelled;
     }
 
     @Override
     protected void compute() {
         logger.trace("Hex calculation for task {} has started.", taskId);
+
         try {
             InputStream stream = source.openStream();
             byte[] bytes = readStream(stream);

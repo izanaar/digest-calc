@@ -14,19 +14,32 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class DigestForkJoinTaskTest {
 
-    private final Function<byte[], String> performer = String::new;
-    final URL fileUrl;
+    private final Function<byte[], String>
+            performer,
+            delayPerformer;
+
+    private final URL fileUrl;
 
     public DigestForkJoinTaskTest() throws MalformedURLException {
         fileUrl = new URL("file:///home/traum/file");
+
+        delayPerformer = (array) -> {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return new String(array);
+        };
+
+        performer = String::new;
+
     }
 
     @Test
@@ -104,39 +117,31 @@ public class DigestForkJoinTaskTest {
 
     @Test
     public void testCancel() throws Exception {
-        UnaryOperator<DigestForkJoinTask> taskUnaryOperator = this::createNextTask;
-        Function<byte[], String> delayPerformer = (array) -> {
-            try {
-                Thread.sleep(150);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return new String(array);
-        };
+        UnaryOperator<DigestForkJoinTask> streamIterateOperator = this::iterateOperator;
 
         List<DigestForkJoinTask> tasks = Stream
-                .iterate(new DigestForkJoinTask(delayPerformer, fileUrl, getEmptyListener(), 5L), taskUnaryOperator)
+                .iterate(new DigestForkJoinTask(delayPerformer, fileUrl, getEmptyListener(), 1L), streamIterateOperator)
                 .limit(3)
                 .collect(Collectors.toList());
 
-        ForkJoinPool pool = new ForkJoinPool(1);
-        tasks.forEach(pool::invoke);
-        Thread.sleep(50);
-        assertFalse(tasks.get(0).cancel(true));
-        assertTrue(tasks.get(1).cancel(true));
+        ForkJoinPool singlePool = new ForkJoinPool(1);
 
-        Thread.sleep(400);
+        tasks.forEach(singlePool::execute);
+        Thread.sleep(100);
+        DigestForkJoinTask cancellableTask = tasks.get(0);
+        //assertFalse(cancellableTask.cancel(true));
+        System.out.println(cancellableTask.cancel(true));
 
-        assertFalse(tasks.get(0).isCancelled());
-        assertTrue(tasks.get(1).isCancelled());
-        assertTrue(tasks.get(0).isCompletedNormally());
-        assertTrue(tasks.get(0).isCompletedAbnormally());
+        DigestForkJoinTask cancelledTask = tasks.get(1);
+        assertTrue(cancelledTask.cancel(true));
+        Thread.sleep(700);
+        System.out.println();
     }
 
-    private DigestForkJoinTask createNextTask(DigestForkJoinTask oldTask) {
-        Long oldId = oldTask.getTaskId();
-
-        return new DigestForkJoinTask(performer, fileUrl, getEmptyListener(), oldId + 1);
+    private DigestForkJoinTask iterateOperator(DigestForkJoinTask oldTask) {
+        Long oldId = (Long) ReflectionTestUtils.getField(oldTask, DigestForkJoinTask.class, "taskId");
+        DigestForkJoinTask newTask = new DigestForkJoinTask(delayPerformer, fileUrl, getEmptyListener(), ++oldId);
+        return newTask;
     }
 
     public TaskStatusListener getEmptyListener() {
