@@ -5,7 +5,6 @@ function indexController($scope, $uibModal, jobService, Notification) {
     jobService.getJobs().then(function (response) {
         console.log(response);
         $scope.jobs = response.data.content;
-
     }, function () {
         alert('Tasks haven\'t been loaded');
     });
