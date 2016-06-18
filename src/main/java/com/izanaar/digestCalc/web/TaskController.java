@@ -1,7 +1,6 @@
 package com.izanaar.digestCalc.web;
 
 import com.izanaar.digestCalc.repository.entity.Task;
-import com.izanaar.digestCalc.repository.entity.TaskDTO;
 import com.izanaar.digestCalc.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,12 +17,17 @@ public class TaskController {
     private TaskService taskService;
 
     @RequestMapping("/all")
-    public @ResponseBody List<Task> getAll(){
-        return taskService.getAll();
+    public @ResponseBody ApiResponse<List<Task>> getAll(){
+        return new ApiResponse<>(true, taskService.getAll());
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public @ResponseBody Task getTask(Long id){
+        return taskService.getById(id);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody TaskDTO addTask(@Valid TaskDTO task){
+    public @ResponseBody Task addTask(@Valid Task task){
         System.out.println(task);
         return task;
     }

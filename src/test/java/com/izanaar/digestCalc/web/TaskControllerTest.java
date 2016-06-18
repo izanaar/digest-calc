@@ -1,12 +1,13 @@
 package com.izanaar.digestCalc.web;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.izanaar.digestCalc.exception.TaskServiceException;
 import com.izanaar.digestCalc.repository.entity.Task;
-import com.izanaar.digestCalc.repository.entity.TaskDTO;
 import com.izanaar.digestCalc.repository.enums.Algo;
+import com.izanaar.digestCalc.repository.enums.TaskStatus;
 import com.izanaar.digestCalc.service.TaskService;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -14,17 +15,19 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,6 +44,11 @@ public class TaskControllerTest {
 
     private URL testUrl;
 
+    private ObjectMapper objectMapper;
+
+    private Long id;
+
+    private String uuid;
 
     @Before
     public void setUp() throws Exception {
@@ -48,50 +56,62 @@ public class TaskControllerTest {
                 .standaloneSetup(taskController)
                 .build();
         testUrl = new URL("file:///opt/somefile");
+        objectMapper = new ObjectMapper();
+        id = 5L;
+        uuid = UUID.randomUUID().toString();
     }
 
     @Test
     public void testGetAll() throws Exception {
-        final List<Task> tasks = Collections.singletonList(new Task(testUrl, Algo.MD5, new Date(), new Date()));
+        List<Task> tasks = Collections.singletonList(new Task(testUrl, Algo.MD5));
+        ApiResponse<List<Task>> expectedResponse =
+                new ApiResponse<>(true, tasks);
+
         when(taskService.getAll()).thenReturn(tasks);
 
         mockMvc
                 .perform(get("/task/all"))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(content().json(new ObjectMapper().writeValueAsString(tasks)))
+                .andExpect(contentTypeJSON())
+                .andExpect(contentJSON(expectedResponse))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void getById() throws Exception {
-        final Task expectedTask = new Task(testUrl, Algo.SHA256, new Date(), new Date());
-        long id = 55L;
+        Task expectedTask = new Task(testUrl, Algo.SHA256);
+        ApiResponse<Task> expectedResponse = new ApiResponse<>(true, expectedTask);
 
         when(taskService.getById(id)).thenReturn(expectedTask);
 
         mockMvc
-                .perform(get("/task").param("id","55"))
+                .perform(get("/task").param("id", "55"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(content().json(new ObjectMapper().writeValueAsString(expectedTask)));
+                .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
     }
 
     @Test
     public void testSuccessfulAddingTask() throws Exception {
-        final Algo algo = Algo.SHA256;
-        final URL url = new URL("file:///opt/web/file.txt");
+        String uuid = UUID.randomUUID().toString();
+
+        Task incomingTask = new Task(testUrl, Algo.MD5),
+                outgoingTask = new Task(5L, uuid, incomingTask.getAlgo(), incomingTask.getSrcUrl());
+
+        when(taskService.add(incomingTask)).thenReturn(outgoingTask);
 
         mockMvc
                 .perform(post("/task")
-                .param("algo", algo.toString())
-                .param("srcUrl", url.toString()))
-                .andExpect(status().isOk());
+                        .param("algo", incomingTask.getAlgo().toString())
+                        .param("srcUrl", incomingTask.getSrcUrl().toString()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().json(objectMapper.writeValueAsString(outgoingTask)));
     }
 
     @Test
     public void testTaskConstraints() throws Exception {
-        final Algo algo = Algo.SHA256;
-        final URL url = new URL("file:///opt/web/file.txt");
+        Algo algo = Algo.SHA256;
+        URL url = new URL("file:///opt/web/file.txt");
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 
@@ -99,7 +119,7 @@ public class TaskControllerTest {
                 .perform(post("/task").params(params))
                 .andExpect(status().isBadRequest());
 
-        params.add("algo",algo.toString());
+        params.add("algo", algo.toString());
         mockMvc
                 .perform(post("/task").params(params))
                 .andExpect(status().isBadRequest());
@@ -108,5 +128,66 @@ public class TaskControllerTest {
         mockMvc
                 .perform(post("/task").params(params))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testSuccessfulDelete() throws Exception {
+        ApiResponse expectedResponse = new ApiResponse(true);
+
+        mockMvc
+                .perform(delete("/task").param("id", id.toString()))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testFailedDelete() throws Exception {
+        String message = "Something went wrong.";
+        TaskServiceException exception = new TaskServiceException(message);
+        ApiResponse<Long> response = new ApiResponse<>(message, false, id);
+
+        doThrow(exception).when(taskService).delete(id);
+
+        mockMvc
+                .perform(delete("/task").param("id", id.toString()))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().json(objectMapper.writeValueAsString(response)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testSuccessfulCancel() throws Exception {
+        Task outgoingTask = new Task(id, uuid, Algo.MD5, testUrl);
+        outgoingTask.setStatus(TaskStatus.CANCELLED);
+
+        ApiResponse<Task> response = new ApiResponse<>(true, outgoingTask);
+
+        mockMvc
+                .perform(get("/task/cancel").param("id", id.toString()))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().json(objectMapper.writeValueAsString(response)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testFailedCancel() throws Exception {
+        String message = "Something went wrong.";
+        ApiResponse<Long> response = new ApiResponse<>(message, false, id);
+
+        mockMvc
+                .perform(get("/task/cancel").param("id",id.toString()))
+                .andExpect(contentTypeJSON())
+                .andExpect(contentJSON(response))
+                .andExpect(status().isOk());
+    }
+
+
+    private ResultMatcher contentTypeJSON(){
+        return content().contentType(MediaType.APPLICATION_JSON_UTF8);
+    }
+
+    private ResultMatcher contentJSON(Object object) throws JsonProcessingException {
+        return content().json(objectMapper.writeValueAsString(object));
     }
 }
