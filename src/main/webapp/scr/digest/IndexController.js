@@ -1,12 +1,14 @@
-function indexController($scope, digestService) {
+function indexController($scope, $uibModal, jobService, Notification) {
 
     $scope.greeting = "HELLO";
 
-    digestService.getJobs().then(function (response) {
+    jobService.getJobs().then(function (response) {
         console.log(response);
-        $scope.tasks = response.data.content;
+        $scope.jobs = response.data.content;
 
     }, function () {
         alert('Tasks haven\'t been loaded');
     });
+
+    Notification.success("Success!");
 }

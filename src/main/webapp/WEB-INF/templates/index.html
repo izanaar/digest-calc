@@ -4,6 +4,7 @@
     <meta charset="UTF-8"/>
     <title>Index</title>
 
+    <link rel="stylesheet" href="/bower_components/angular-ui-notification/dist/angular-ui-notification.min.css"/>
     <link rel='stylesheet' href='/bower_components/roboto-fontface/css/roboto-fontface.css'/>
     <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.css"/>
     <link rel="stylesheet" href="/css/app.css"/>
@@ -11,14 +12,16 @@
     <script src="/bower_components/angular/angular.js" type="text/javascript"></script>
     <script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 
-    <script src="/scr/digest/DigestController.js" type="text/javascript"></script>
-    <script src="/scr/digest/DigestService.js" type="text/javascript"></script>
-    <script src="/scr/digest/AddTaskModalController.js" type="text/javascript"></script>
+    <script src="/bower_components/angular-ui-notification/dist/angular-ui-notification.js"></script>
+
+    <script src="/scr/digest/IndexController.js" type="text/javascript"></script>
+    <script src="/scr/digest/JobService.js" type="text/javascript"></script>
+    <script src="/scr/digest/AddJobModalController.js" type="text/javascript"></script>
     <script src="/scr/app.js" type="text/javascript"></script>
 </head>
-<body ng-app="digestApp">
+<body ng-app="jobTrackerApp">
 
-<div class="container content" ng-controller="digestController">
+<div class="container content" ng-controller="indexController">
     <div class="panel panel-default">
         <div class="panel-heading">
             <span>Current jobs:</span>
@@ -60,7 +63,7 @@
         </div>
         <div class="col-md-4 text-right">
             <span class="navbar-brand"> Your ID: </span>
-            <span class="navbar-brand" th:text="${session.uuid}"></span>
+            <span class="navbar-brand" th:text="${beans.uuid.value}"></span>
         </div>
     </nav>
 </div>

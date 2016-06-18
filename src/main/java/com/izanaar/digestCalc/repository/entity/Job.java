@@ -9,7 +9,7 @@ import java.net.URL;
 import java.util.Date;
 
 @Entity
-@Table(name = "tasks")
+@Table(name = "jobs")
 public class Job {
 
     @Id

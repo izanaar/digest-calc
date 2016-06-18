@@ -1,9 +1,10 @@
-var digestApp = angular.module('digestApp',[
-    'ui.bootstrap'
+var digestApp = angular.module('jobTrackerApp',[
+    'ui.bootstrap',
+    'ui-notification'
 ]);
 
 
-digestApp.controller('indexController', ['$scope', 'jobService', indexController]);
+digestApp.controller('indexController', ['$scope', '$uibModal', 'jobService', 'Notification', indexController]);
 digestApp.controller('addTaskModalController', ['$scope', 'jobService', addTaskModalController]);
 
 digestApp.service('jobService', ['$http', jobService]);
