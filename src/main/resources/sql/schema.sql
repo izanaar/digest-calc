@@ -1,1 +1,1 @@
-create table tasks (id bigint not null, algo varchar(255) not null, endDate timestamp, srcUrl varchar(255) not null, stackTrace varchar(255), startDate timestamp, status varchar(255), uuid varchar(255), primary key (id))
+create table jobs (id bigint not null, algo varchar(255) not null, endDate timestamp, srcUrl varchar(255) not null, stackTrace varchar(255), startDate timestamp, status varchar(255), uuid varchar(255), primary key (id))

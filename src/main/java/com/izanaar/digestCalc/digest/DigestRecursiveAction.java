@@ -14,20 +14,20 @@ public class DigestRecursiveAction extends RecursiveAction {
     private Function<byte[], String> performer;
     private URL source;
     private AtomicBoolean operationStarted;
-    private TaskStatusListener statusListener;
-    private Long taskId;
+    private JobStatusListener statusListener;
+    private Long jobId;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    DigestRecursiveAction(URL source, TaskStatusListener statusListener, Long taskId) {
+    DigestRecursiveAction(URL source, JobStatusListener statusListener, Long jobId) {
         this.source = source;
         this.statusListener = statusListener;
-        this.taskId = taskId;
+        this.jobId = jobId;
     }
 
     public DigestRecursiveAction(Function<byte[], String> performer, URL source,
-                                 TaskStatusListener statusListener, Long taskId) {
-        this(source, statusListener, taskId);
+                                 JobStatusListener statusListener, Long jobId) {
+        this(source, statusListener, jobId);
         this.performer = performer;
         operationStarted = new AtomicBoolean(false);
     }
@@ -43,17 +43,17 @@ public class DigestRecursiveAction extends RecursiveAction {
 
     @Override
     protected void compute() {
-        logger.trace("Hex calculation for task {} has started.", taskId);
+        logger.trace("Hex calculation for task {} has started.", jobId);
         operationStarted.set(true);
         try {
             InputStream stream = source.openStream();
             byte[] bytes = readStream(stream);
             String hex = performer.apply(bytes);
-            logger.trace("Hex calculation for task {} has ended.", taskId);
-            statusListener.notifySuccess(taskId, hex);
+            logger.trace("Hex calculation for task {} has ended.", jobId);
+            statusListener.notifySuccess(jobId, hex);
         } catch (IOException e) {
-            logger.error("Hex calculation for task {} has failed.", taskId);
-            statusListener.notifyFailure(taskId, getStackTrace(e));
+            logger.error("Hex calculation for task {} has failed.", jobId);
+            statusListener.notifyFailure(jobId, getStackTrace(e));
         }
     }
 
@@ -83,7 +83,7 @@ public class DigestRecursiveAction extends RecursiveAction {
             return false;
         if (statusListener != null ? !statusListener.equals(that.statusListener) : that.statusListener != null)
             return false;
-        if (taskId != null ? !taskId.equals(that.taskId) : that.taskId != null) return false;
+        if (jobId != null ? !jobId.equals(that.jobId) : that.jobId != null) return false;
         return logger != null ? logger.equals(that.logger) : that.logger == null;
 
     }
@@ -94,7 +94,7 @@ public class DigestRecursiveAction extends RecursiveAction {
         result = 31 * result + (source != null ? source.hashCode() : 0);
         result = 31 * result + (operationStarted != null ? operationStarted.hashCode() : 0);
         result = 31 * result + (statusListener != null ? statusListener.hashCode() : 0);
-        result = 31 * result + (taskId != null ? taskId.hashCode() : 0);
+        result = 31 * result + (jobId != null ? jobId.hashCode() : 0);
         result = 31 * result + (logger != null ? logger.hashCode() : 0);
         return result;
     }
@@ -106,7 +106,7 @@ public class DigestRecursiveAction extends RecursiveAction {
                 ", source=" + source +
                 ", operationStarted=" + operationStarted +
                 ", statusListener=" + statusListener +
-                ", taskId=" + taskId +
+                ", jobId=" + jobId +
                 '}';
     }
 }

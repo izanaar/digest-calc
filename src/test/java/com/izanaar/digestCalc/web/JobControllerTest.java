@@ -2,11 +2,11 @@ package com.izanaar.digestCalc.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.izanaar.digestCalc.exception.TaskServiceException;
-import com.izanaar.digestCalc.repository.entity.Task;
+import com.izanaar.digestCalc.exception.JobServiceException;
+import com.izanaar.digestCalc.repository.entity.Job;
 import com.izanaar.digestCalc.repository.enums.Algo;
-import com.izanaar.digestCalc.repository.enums.TaskStatus;
-import com.izanaar.digestCalc.service.TaskService;
+import com.izanaar.digestCalc.repository.enums.JobStatus;
+import com.izanaar.digestCalc.service.JobService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,13 +32,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TaskControllerTest {
+public class JobControllerTest {
 
     @Mock
-    private TaskService taskService;
+    private JobService jobService;
 
     @InjectMocks
-    private TaskController taskController;
+    private JobController jobController;
 
     private MockMvc mockMvc;
 
@@ -53,7 +53,7 @@ public class TaskControllerTest {
     @Before
     public void setUp() throws Exception {
         mockMvc = MockMvcBuilders
-                .standaloneSetup(taskController)
+                .standaloneSetup(jobController)
                 .build();
         testUrl = new URL("file:///opt/somefile");
         objectMapper = new ObjectMapper();
@@ -63,14 +63,14 @@ public class TaskControllerTest {
 
     @Test
     public void testGetAll() throws Exception {
-        List<Task> tasks = Collections.singletonList(new Task(testUrl, Algo.MD5));
-        ApiResponse<List<Task>> expectedResponse =
-                new ApiResponse<>(true, tasks);
+        List<Job> jobs = Collections.singletonList(new Job(testUrl, Algo.MD5));
+        ApiResponse<List<Job>> expectedResponse =
+                new ApiResponse<>(true, jobs);
 
-        when(taskService.getAll()).thenReturn(tasks);
+        when(jobService.getAll()).thenReturn(jobs);
 
         mockMvc
-                .perform(get("/task/all"))
+                .perform(get("/job/all"))
                 .andExpect(contentTypeJSON())
                 .andExpect(contentJSON(expectedResponse))
                 .andExpect(status().isOk());
@@ -78,75 +78,75 @@ public class TaskControllerTest {
 
     @Test
     public void getById() throws Exception {
-        Task expectedTask = new Task(id, uuid, Algo.SHA256, testUrl);
-        ApiResponse<Task> expectedResponse = new ApiResponse<>(true, expectedTask);
+        Job expectedJob = new Job(id, uuid, Algo.SHA256, testUrl);
+        ApiResponse<Job> expectedResponse = new ApiResponse<>(true, expectedJob);
 
-        when(taskService.getById(id)).thenReturn(expectedTask);
+        when(jobService.getById(id)).thenReturn(expectedJob);
 
         mockMvc
-                .perform(get("/task").param("id", id.toString()))
+                .perform(get("/job").param("id", id.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(content().string(objectMapper.writeValueAsString(expectedResponse)));
     }
 
     @Test
-    public void testSuccessfulAddingTask() throws Exception {
+    public void testSuccessfulAddingJob() throws Exception {
         String uuid = UUID.randomUUID().toString();
 
-        Task incomingTask = new Task(Algo.MD5, testUrl),
-                outgoingTask = new Task(id, uuid, incomingTask.getAlgo(), incomingTask.getSrcUrl());
+        Job incomingJob = new Job(Algo.MD5, testUrl),
+                outgoingJob = new Job(id, uuid, incomingJob.getAlgo(), incomingJob.getSrcUrl());
 
-        ApiResponse<Task> taskApiResponse = new ApiResponse<>(true, outgoingTask);
+        ApiResponse<Job> jobApiResponse = new ApiResponse<>(true, outgoingJob);
 
-        when(taskService.add(incomingTask)).thenReturn(outgoingTask);
+        when(jobService.add(incomingJob)).thenReturn(outgoingJob);
 
         mockMvc
-                .perform(post("/task")
-                        .param("algo", incomingTask.getAlgo().toString())
-                        .param("srcUrl", incomingTask.getSrcUrl().toString()))
+                .perform(post("/job")
+                        .param("algo", incomingJob.getAlgo().toString())
+                        .param("srcUrl", incomingJob.getSrcUrl().toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(content().string(objectMapper.writeValueAsString(taskApiResponse)));
+                .andExpect(content().string(objectMapper.writeValueAsString(jobApiResponse)));
     }
 
     @Test
-    public void testFailedAddingTask() throws Exception {
-        Task incomingTask = new Task(Algo.MD5, testUrl);
+    public void testFailedAddingJob() throws Exception {
+        Job incomingJob = new Job(Algo.MD5, testUrl);
         String message = "Something went wrong.";
 
-        ApiResponse<Task> taskApiResponse = new ApiResponse<>(message, false, incomingTask);
+        ApiResponse<Job> jobApiResponse = new ApiResponse<>(message, false, incomingJob);
 
-        doThrow(new RuntimeException(message)).when(taskService).add(incomingTask);
+        doThrow(new RuntimeException(message)).when(jobService).add(incomingJob);
 
         mockMvc
-                .perform(post("/task")
-                        .param("algo", incomingTask.getAlgo().toString())
-                        .param("srcUrl", incomingTask.getSrcUrl().toString()))
+                .perform(post("/job")
+                        .param("algo", incomingJob.getAlgo().toString())
+                        .param("srcUrl", incomingJob.getSrcUrl().toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(content().string(objectMapper.writeValueAsString(taskApiResponse)));
+                .andExpect(content().string(objectMapper.writeValueAsString(jobApiResponse)));
     }
 
     @Test
-    public void testTaskConstraints() throws Exception {
+    public void testJobConstraints() throws Exception {
         Algo algo = Algo.SHA256;
         URL url = new URL("file:///opt/web/file.txt");
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 
         mockMvc
-                .perform(post("/task").params(params))
+                .perform(post("/job").params(params))
                 .andExpect(status().isBadRequest());
 
         params.add("algo", algo.toString());
         mockMvc
-                .perform(post("/task").params(params))
+                .perform(post("/job").params(params))
                 .andExpect(status().isBadRequest());
 
         params.add("srcUrl", url.toString());
         mockMvc
-                .perform(post("/task").params(params))
+                .perform(post("/job").params(params))
                 .andExpect(status().isOk());
     }
 
@@ -155,7 +155,7 @@ public class TaskControllerTest {
         ApiResponse expectedResponse = new ApiResponse(true);
 
         mockMvc
-                .perform(delete("/task").param("id", id.toString()))
+                .perform(delete("/job").param("id", id.toString()))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)))
                 .andExpect(status().isOk());
@@ -164,13 +164,13 @@ public class TaskControllerTest {
     @Test
     public void testFailedDelete() throws Exception {
         String message = "Something went wrong.";
-        TaskServiceException exception = new TaskServiceException(message);
+        JobServiceException exception = new JobServiceException(message);
         ApiResponse<Long> response = new ApiResponse<>(message, false, id);
 
-        doThrow(exception).when(taskService).delete(id);
+        doThrow(exception).when(jobService).delete(id);
 
         mockMvc
-                .perform(delete("/task").param("id", id.toString()))
+                .perform(delete("/job").param("id", id.toString()))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(content().json(objectMapper.writeValueAsString(response)))
                 .andExpect(status().isOk());
@@ -178,15 +178,15 @@ public class TaskControllerTest {
 
     @Test
     public void testSuccessfulCancel() throws Exception {
-        Task outgoingTask = new Task(id, uuid, Algo.MD5, testUrl);
-        outgoingTask.setStatus(TaskStatus.CANCELLED);
+        Job outgoingJob = new Job(id, uuid, Algo.MD5, testUrl);
+        outgoingJob.setStatus(JobStatus.CANCELLED);
 
-        ApiResponse<Task> response = new ApiResponse<>(true, outgoingTask);
+        ApiResponse<Job> response = new ApiResponse<>(true, outgoingJob);
 
-        when(taskService.cancel(id)).thenReturn(outgoingTask);
+        when(jobService.cancel(id)).thenReturn(outgoingJob);
 
         mockMvc
-                .perform(get("/task/cancel").param("id", id.toString()))
+                .perform(get("/job/cancel").param("id", id.toString()))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(content().string(objectMapper.writeValueAsString(response)))
                 .andExpect(status().isOk());
@@ -198,10 +198,10 @@ public class TaskControllerTest {
         ApiResponse<Long> response = new ApiResponse<>(message, false, id);
 
 
-        doThrow(new TaskServiceException(message)).when(taskService).cancel(id);
+        doThrow(new JobServiceException(message)).when(jobService).cancel(id);
 
         mockMvc
-                .perform(get("/task/cancel").param("id", id.toString()))
+                .perform(get("/job/cancel").param("id", id.toString()))
                 .andExpect(contentTypeJSON())
                 .andExpect(contentJSON(response))
                 .andExpect(status().isOk());

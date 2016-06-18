@@ -2,11 +2,9 @@ package com.izanaar.digestCalc.digest;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+public class DigestJobFactoryTest {
 
-public class DigestTaskFactoryTest {
-
-    private DigestTaskFactory factory;
+    private DigestJobFactory factory;
 
     @Test
     public void getMD5ForkJoinTask() throws Exception {

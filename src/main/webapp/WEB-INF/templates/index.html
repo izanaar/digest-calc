@@ -13,27 +13,40 @@
 
     <script src="/scr/digest/DigestController.js" type="text/javascript"></script>
     <script src="/scr/digest/DigestService.js" type="text/javascript"></script>
+    <script src="/scr/digest/AddTaskModalController.js" type="text/javascript"></script>
     <script src="/scr/app.js" type="text/javascript"></script>
 </head>
 <body ng-app="digestApp">
 
 <div class="container content" ng-controller="digestController">
-    <div class="row">
-        <div class="navbar-header col-md-9 col-md-offset-1">
-            <span class="navbar-brand">Current tasks:</span>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span>Current jobs:</span>
+            <button class="btn btn-primary">New job</button>
         </div>
-        <div class="col-md-2 new-task">
-            <button class="btn btn-primary btn-block">New task</button>
-        </div>
-    </div>
-    <div>
-        {{greeting}}
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div ng-repeat="task in tasks">
-                {{task.id}}
-            </div>
+        <div class="panel-body">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Algo</th>
+                    <th>Status</th>
+                    <th>Start date</th>
+                    <th>End date</th>
+                    <th>Src url</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="job in jobs">
+                    <th>{{job.id}}</th>
+                    <td>{{job.algo}}</td>
+                    <td>{{job.status}}</td>
+                    <td>{{job.startDate}}</td>
+                    <td>{{job.endDate}}</td>
+                    <td>{{job.srcUrl}}</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -42,7 +55,7 @@
     <nav class="navbar navbar-inverse navbar-fixed-bottom">
         <div class="col-md-7 col-md-offset-1">
             <div class="navbar-header">
-                <span class="navbar-brand">Digest task manager</span>
+                <span class="navbar-brand">Digest job manager</span>
             </div>
         </div>
         <div class="col-md-4 text-right">
@@ -51,6 +64,7 @@
         </div>
     </nav>
 </div>
+
 <script src="/bower_components/jquery/dist/jquery.js"></script>
 <script src="/bower_components/bootstrap/dist/js/bootstrap.js"></script>
 </body>

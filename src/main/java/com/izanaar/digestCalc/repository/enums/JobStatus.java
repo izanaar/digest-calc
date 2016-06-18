@@ -1,5 +1,5 @@
 package com.izanaar.digestCalc.repository.enums;
 
-public enum TaskStatus {
+public enum JobStatus {
     WAITING, PENDING, COMPLETED, FAILED, CANCELLED
 }

@@ -3,5 +3,7 @@ var digestApp = angular.module('digestApp',[
 ]);
 
 
-digestApp.controller('digestController', ['$scope', 'digestService', digestController]);
-digestApp.service('digestService', ['$http', digestService]);
+digestApp.controller('indexController', ['$scope', 'jobService', indexController]);
+digestApp.controller('addTaskModalController', ['$scope', 'jobService', addTaskModalController]);
+
+digestApp.service('jobService', ['$http', jobService]);

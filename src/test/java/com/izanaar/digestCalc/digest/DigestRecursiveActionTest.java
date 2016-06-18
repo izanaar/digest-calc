@@ -50,14 +50,14 @@ public class DigestRecursiveActionTest {
         URL url = createTestUrl(testContent);
 
 
-        TaskStatusListener statusListener = getSuccessStatusListener(testContent, testTaskID);
+        JobStatusListener statusListener = getSuccessStatusListener(testContent, testTaskID);
 
         DigestRecursiveAction task = new DigestRecursiveAction(performer, url, statusListener, testTaskID);
         task.compute();
     }
 
-    private TaskStatusListener getSuccessStatusListener(String expectedHex, Long expectedId) {
-        return new TaskStatusListener() {
+    private JobStatusListener getSuccessStatusListener(String expectedHex, Long expectedId) {
+        return new JobStatusListener() {
             @Override
             public void notifySuccess(Long id, String hex) {
                 assertEquals(expectedHex, hex);
@@ -94,14 +94,14 @@ public class DigestRecursiveActionTest {
         Function<byte[], String> performer = String::new;
 
 
-        TaskStatusListener statusListener = getErrorStatusListener("FileNotFoundException", testTaskId);
+        JobStatusListener statusListener = getErrorStatusListener("FileNotFoundException", testTaskId);
 
         DigestRecursiveAction task = new DigestRecursiveAction(performer, url, statusListener, testTaskId);
         task.invoke();
     }
 
-    private TaskStatusListener getErrorStatusListener(String expectedStackTracePart, Long expectedId) {
-        return new TaskStatusListener() {
+    private JobStatusListener getErrorStatusListener(String expectedStackTracePart, Long expectedId) {
+        return new JobStatusListener() {
             @Override
             public void notifySuccess(Long id, String hex) {
                 assertTrue(false);
@@ -146,13 +146,13 @@ public class DigestRecursiveActionTest {
     }
 
     private DigestRecursiveAction iterateOperator(DigestRecursiveAction oldTask) {
-        Long oldId = (Long) ReflectionTestUtils.getField(oldTask, DigestRecursiveAction.class, "taskId");
+        Long oldId = (Long) ReflectionTestUtils.getField(oldTask, DigestRecursiveAction.class, "jobId");
         DigestRecursiveAction newTask = new DigestRecursiveAction(delayPerformer, fileUrl, getEmptyListener(), ++oldId);
         return newTask;
     }
 
-    private TaskStatusListener getEmptyListener() {
-        return new TaskStatusListener() {
+    private JobStatusListener getEmptyListener() {
+        return new JobStatusListener() {
             @Override
             public void notifySuccess(Long id, String hex) {
 

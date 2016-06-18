@@ -1,6 +1,6 @@
 package com.izanaar.digestCalc.digest;
 
-public interface TaskStatusListener {
+public interface JobStatusListener {
 
     void notifySuccess(Long id, String hex);
 

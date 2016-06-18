@@ -1,6 +1,6 @@
 package com.izanaar.digestCalc.config.data;
 
-import com.izanaar.digestCalc.repository.TaskRepository;
+import com.izanaar.digestCalc.repository.JobRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -18,7 +18,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackageClasses = TaskRepository.class)
+@EnableJpaRepositories(basePackageClasses = JobRepository.class)
 public class JpaConfig {
 
     @Bean

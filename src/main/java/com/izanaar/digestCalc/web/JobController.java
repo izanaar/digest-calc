@@ -1,7 +1,7 @@
 package com.izanaar.digestCalc.web;
 
-import com.izanaar.digestCalc.repository.entity.Task;
-import com.izanaar.digestCalc.service.TaskService;
+import com.izanaar.digestCalc.repository.entity.Job;
+import com.izanaar.digestCalc.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,43 +12,43 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
-@RequestMapping("/task")
-public class TaskController {
+@RequestMapping("/job")
+public class JobController {
 
     @Autowired
-    private TaskService taskService;
+    private JobService taskService;
 
     @RequestMapping("/all")
-    public @ResponseBody ApiResponse<List<Task>> getAll(){
+    public @ResponseBody ApiResponse<List<Job>> getAll(){
         return new ApiResponse<>(true, taskService.getAll());
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public @ResponseBody ApiResponse<Task> getTask(Long id){
+    public @ResponseBody ApiResponse<Job> getJob(Long id){
         return new ApiResponse<>(true, taskService.getById(id));
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody ApiResponse<?> addTask(@Valid Task task){
+    public @ResponseBody ApiResponse<?> addJob(@Valid Job job){
         ApiResponse<?> response;
 
         try{
-            Task addedTask = taskService.add(task);
-            response = new ApiResponse<>(true, addedTask);
+            Job addedJob = taskService.add(job);
+            response = new ApiResponse<>(true, addedJob);
         }catch (Exception e){
-            response = new ApiResponse<>(e.getMessage(), false, task);
+            response = new ApiResponse<>(e.getMessage(), false, job);
         }
 
         return response;
     }
 
     @RequestMapping(value = "/cancel", method = RequestMethod.GET)
-    public @ResponseBody ApiResponse<?> cancelTask(Long id){
+    public @ResponseBody ApiResponse<?> cancelJob(Long id){
         ApiResponse<?> response;
 
         try{
-            Task responseTask = taskService.cancel(id);
-            response = new ApiResponse<>(true, responseTask);
+            Job responseJob = taskService.cancel(id);
+            response = new ApiResponse<>(true, responseJob);
         } catch (Exception e) {
             response = new ApiResponse<>(e.getMessage(), false, id);
         }
@@ -57,7 +57,7 @@ public class TaskController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
-    public @ResponseBody ApiResponse<?> deleteTask(Long id){
+    public @ResponseBody ApiResponse<?> deleteJob(Long id){
         ApiResponse<?> response;
 
         try{

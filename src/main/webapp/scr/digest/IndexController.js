@@ -1,8 +1,8 @@
-function digestController($scope, digestService) {
+function indexController($scope, digestService) {
 
     $scope.greeting = "HELLO";
 
-    digestService.getTasks().then(function (response) {
+    digestService.getJobs().then(function (response) {
         console.log(response);
         $scope.tasks = response.data.content;
 

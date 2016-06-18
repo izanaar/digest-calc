@@ -1,16 +1,16 @@
 package com.izanaar.digestCalc.digest;
 
-import com.izanaar.digestCalc.repository.entity.Task;
+import com.izanaar.digestCalc.repository.entity.Job;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DigestTaskFactory {
+public class DigestJobFactory {
 
-    public DigestRecursiveAction getTask(Task task, TaskStatusListener listener){
-        DigestRecursiveAction digestRecursiveAction = new DigestRecursiveAction(task.getSrcUrl(), listener, task.getId());
+    public DigestRecursiveAction getJob(Job job, JobStatusListener listener){
+        DigestRecursiveAction digestRecursiveAction = new DigestRecursiveAction(job.getSrcUrl(), listener, job.getId());
 
-        switch (task.getAlgo()) {
+        switch (job.getAlgo()) {
             case MD5:
                 digestRecursiveAction.setPerformer(DigestUtils::md5Hex);
                 break;

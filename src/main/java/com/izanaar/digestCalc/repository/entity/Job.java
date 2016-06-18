@@ -1,7 +1,7 @@
 package com.izanaar.digestCalc.repository.entity;
 
 import com.izanaar.digestCalc.repository.enums.Algo;
-import com.izanaar.digestCalc.repository.enums.TaskStatus;
+import com.izanaar.digestCalc.repository.enums.JobStatus;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "tasks")
-public class Task {
+public class Job {
 
     @Id
     @GeneratedValue
@@ -23,7 +23,7 @@ public class Task {
     private Algo algo;
 
     @Enumerated(EnumType.STRING)
-    private TaskStatus status;
+    private JobStatus status;
 
     private Date startDate;
 
@@ -34,22 +34,22 @@ public class Task {
 
     private String stackTrace;
 
-    public Task() {
+    public Job() {
     }
 
-    public Task(Long id ,String uuid, Algo algo, URL srcUrl) {
+    public Job(Long id , String uuid, Algo algo, URL srcUrl) {
         this.id = id;
         this.uuid = uuid;
         this.algo = algo;
         this.srcUrl = srcUrl;
     }
 
-    public Task(URL srcUrl, Algo algo) {
+    public Job(URL srcUrl, Algo algo) {
         this.srcUrl = srcUrl;
         this.algo = algo;
     }
 
-    public Task(Algo algo, URL srcUrl) {
+    public Job(Algo algo, URL srcUrl) {
         this.algo = algo;
         this.srcUrl = srcUrl;
     }
@@ -59,16 +59,16 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Task task = (Task) o;
+        Job job = (Job) o;
 
-        if (id != null ? !id.equals(task.id) : task.id != null) return false;
-        if (uuid != null ? !uuid.equals(task.uuid) : task.uuid != null) return false;
-        if (algo != task.algo) return false;
-        if (status != task.status) return false;
-        if (startDate != null ? !startDate.equals(task.startDate) : task.startDate != null) return false;
-        if (endDate != null ? !endDate.equals(task.endDate) : task.endDate != null) return false;
-        if (srcUrl != null ? !srcUrl.equals(task.srcUrl) : task.srcUrl != null) return false;
-        return stackTrace != null ? stackTrace.equals(task.stackTrace) : task.stackTrace == null;
+        if (id != null ? !id.equals(job.id) : job.id != null) return false;
+        if (uuid != null ? !uuid.equals(job.uuid) : job.uuid != null) return false;
+        if (algo != job.algo) return false;
+        if (status != job.status) return false;
+        if (startDate != null ? !startDate.equals(job.startDate) : job.startDate != null) return false;
+        if (endDate != null ? !endDate.equals(job.endDate) : job.endDate != null) return false;
+        if (srcUrl != null ? !srcUrl.equals(job.srcUrl) : job.srcUrl != null) return false;
+        return stackTrace != null ? stackTrace.equals(job.stackTrace) : job.stackTrace == null;
 
     }
 
@@ -87,7 +87,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
+        return "Job{" +
                 "id=" + id +
                 ", uuid='" + uuid + '\'' +
                 ", algo=" + algo +
@@ -155,11 +155,11 @@ public class Task {
         this.stackTrace = stackTrace;
     }
 
-    public TaskStatus getStatus() {
+    public JobStatus getStatus() {
         return status;
     }
 
-    public void setStatus(TaskStatus status) {
+    public void setStatus(JobStatus status) {
         this.status = status;
     }
 }
