@@ -3,6 +3,7 @@ package com.izanaar.digestCalc.service;
 import com.izanaar.digestCalc.digest.DigestTaskFactory;
 import com.izanaar.digestCalc.digest.TaskStatusListener;
 import com.izanaar.digestCalc.exception.TaskServiceException;
+import com.izanaar.digestCalc.repository.TaskRepository;
 import com.izanaar.digestCalc.repository.entity.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,8 @@ public class TaskService implements TaskStatusListener{
     @Autowired
     private DigestTaskFactory factory;
 
+    @Autowired
+    private TaskRepository taskRepository;
 
     public List<Task> getAll(){
         return null;
