@@ -3,3 +3,5 @@ var digestApp = angular.module('digestApp',[
 ]);
 
 
+digestApp.controller('digestController', ['$scope', 'digestService', digestController]);
+digestApp.service('digestService', ['$http', digestService]);

@@ -3,7 +3,7 @@ package com.izanaar.digestCalc.web;
 public class ApiResponse<T> {
 
     private boolean status;
-    private T response;
+    private T content;
     private String message;
 
     public ApiResponse() {
@@ -13,15 +13,15 @@ public class ApiResponse<T> {
         this.status = status;
     }
 
-    public ApiResponse(boolean status, T response) {
+    public ApiResponse(boolean status, T content) {
         this.status = status;
-        this.response = response;
+        this.content = content;
     }
 
-    public ApiResponse(String message, boolean status, T response) {
+    public ApiResponse(String message, boolean status, T content) {
         this.message = message;
         this.status = status;
-        this.response = response;
+        this.content = content;
     }
 
     public boolean isStatus() {
@@ -32,12 +32,12 @@ public class ApiResponse<T> {
         this.status = status;
     }
 
-    public T getResponse() {
-        return response;
+    public T getContent() {
+        return content;
     }
 
-    public void setResponse(T response) {
-        this.response = response;
+    public void setContent(T content) {
+        this.content = content;
     }
 
     public String getMessage() {
@@ -52,7 +52,7 @@ public class ApiResponse<T> {
     public String toString() {
         return "ApiResponse{" +
                 "status=" + status +
-                ", response=" + response +
+                ", content=" + content +
                 ", message='" + message + '\'' +
                 '}';
     }
@@ -65,7 +65,7 @@ public class ApiResponse<T> {
         ApiResponse<?> that = (ApiResponse<?>) o;
 
         if (status != that.status) return false;
-        if (response != null ? !response.equals(that.response) : that.response != null) return false;
+        if (content != null ? !content.equals(that.content) : that.content != null) return false;
         return message != null ? message.equals(that.message) : that.message == null;
 
     }
@@ -73,7 +73,7 @@ public class ApiResponse<T> {
     @Override
     public int hashCode() {
         int result = (status ? 1 : 0);
-        result = 31 * result + (response != null ? response.hashCode() : 0);
+        result = 31 * result + (content != null ? content.hashCode() : 0);
         result = 31 * result + (message != null ? message.hashCode() : 0);
         return result;
     }
