@@ -78,24 +78,26 @@ public class TaskControllerTest {
 
     @Test
     public void getById() throws Exception {
-        Task expectedTask = new Task(testUrl, Algo.SHA256);
+        Task expectedTask = new Task(id, uuid, Algo.SHA256, testUrl);
         ApiResponse<Task> expectedResponse = new ApiResponse<>(true, expectedTask);
 
         when(taskService.getById(id)).thenReturn(expectedTask);
 
         mockMvc
-                .perform(get("/task").param("id", "55"))
+                .perform(get("/task").param("id", id.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
+                .andExpect(content().string(objectMapper.writeValueAsString(expectedResponse)));
     }
 
     @Test
     public void testSuccessfulAddingTask() throws Exception {
         String uuid = UUID.randomUUID().toString();
 
-        Task incomingTask = new Task(testUrl, Algo.MD5),
-                outgoingTask = new Task(5L, uuid, incomingTask.getAlgo(), incomingTask.getSrcUrl());
+        Task incomingTask = new Task(Algo.MD5, testUrl),
+                outgoingTask = new Task(id, uuid, incomingTask.getAlgo(), incomingTask.getSrcUrl());
+
+        ApiResponse<Task> taskApiResponse = new ApiResponse<>(true, outgoingTask);
 
         when(taskService.add(incomingTask)).thenReturn(outgoingTask);
 
@@ -105,7 +107,25 @@ public class TaskControllerTest {
                         .param("srcUrl", incomingTask.getSrcUrl().toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(content().json(objectMapper.writeValueAsString(outgoingTask)));
+                .andExpect(content().string(objectMapper.writeValueAsString(taskApiResponse)));
+    }
+
+    @Test
+    public void testFailedAddingTask() throws Exception {
+        Task incomingTask = new Task(Algo.MD5, testUrl);
+        String message = "Something went wrong.";
+
+        ApiResponse<Task> taskApiResponse = new ApiResponse<>(message, false, incomingTask);
+
+        doThrow(new RuntimeException(message)).when(taskService).add(incomingTask);
+
+        mockMvc
+                .perform(post("/task")
+                        .param("algo", incomingTask.getAlgo().toString())
+                        .param("srcUrl", incomingTask.getSrcUrl().toString()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().string(objectMapper.writeValueAsString(taskApiResponse)));
     }
 
     @Test
@@ -163,10 +183,12 @@ public class TaskControllerTest {
 
         ApiResponse<Task> response = new ApiResponse<>(true, outgoingTask);
 
+        when(taskService.cancel(id)).thenReturn(outgoingTask);
+
         mockMvc
                 .perform(get("/task/cancel").param("id", id.toString()))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(content().json(objectMapper.writeValueAsString(response)))
+                .andExpect(content().string(objectMapper.writeValueAsString(response)))
                 .andExpect(status().isOk());
     }
 
@@ -175,19 +197,22 @@ public class TaskControllerTest {
         String message = "Something went wrong.";
         ApiResponse<Long> response = new ApiResponse<>(message, false, id);
 
+
+        doThrow(new TaskServiceException(message)).when(taskService).cancel(id);
+
         mockMvc
-                .perform(get("/task/cancel").param("id",id.toString()))
+                .perform(get("/task/cancel").param("id", id.toString()))
                 .andExpect(contentTypeJSON())
                 .andExpect(contentJSON(response))
                 .andExpect(status().isOk());
     }
 
 
-    private ResultMatcher contentTypeJSON(){
+    private ResultMatcher contentTypeJSON() {
         return content().contentType(MediaType.APPLICATION_JSON_UTF8);
     }
 
     private ResultMatcher contentJSON(Object object) throws JsonProcessingException {
-        return content().json(objectMapper.writeValueAsString(object));
+        return content().string(objectMapper.writeValueAsString(object));
     }
 }

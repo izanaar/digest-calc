@@ -22,13 +22,49 @@ public class TaskController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public @ResponseBody Task getTask(Long id){
-        return taskService.getById(id);
+    public @ResponseBody ApiResponse<Task> getTask(Long id){
+        return new ApiResponse<>(true, taskService.getById(id));
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody Task addTask(@Valid Task task){
-        System.out.println(task);
-        return task;
+    public @ResponseBody ApiResponse<?> addTask(@Valid Task task){
+        ApiResponse<?> response;
+
+        try{
+            Task addedTask = taskService.add(task);
+            response = new ApiResponse<>(true, addedTask);
+        }catch (Exception e){
+            response = new ApiResponse<>(e.getMessage(), false, task);
+        }
+
+        return response;
+    }
+
+    @RequestMapping(value = "/cancel", method = RequestMethod.GET)
+    public @ResponseBody ApiResponse<?> cancelTask(Long id){
+        ApiResponse<?> response;
+
+        try{
+            Task responseTask = taskService.cancel(id);
+            response = new ApiResponse<>(true, responseTask);
+        } catch (Exception e) {
+            response = new ApiResponse<>(e.getMessage(), false, id);
+        }
+
+        return response;
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE)
+    public @ResponseBody ApiResponse<?> deleteTask(Long id){
+        ApiResponse<?> response;
+
+        try{
+            taskService.delete(id);
+            response = new ApiResponse<>(true);
+        }catch (Exception e){
+            response = new ApiResponse<>(e.getMessage(), false, id);
+        }
+
+        return response;
     }
 }

@@ -49,6 +49,11 @@ public class Task {
         this.algo = algo;
     }
 
+    public Task(Algo algo, URL srcUrl) {
+        this.algo = algo;
+        this.srcUrl = srcUrl;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
