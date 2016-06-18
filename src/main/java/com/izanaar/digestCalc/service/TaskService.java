@@ -23,7 +23,7 @@ public class TaskService implements TaskStatusListener{
     private TaskRepository taskRepository;
 
     public List<Task> getAll(){
-        return null;
+        return taskRepository.findAll();
     }
 
     public Task getById(Long id) {
