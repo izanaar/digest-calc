@@ -59,6 +59,11 @@ public class DigestRecursiveActionTest {
     private JobStatusListener getSuccessStatusListener(String expectedHex, Long expectedId) {
         return new JobStatusListener() {
             @Override
+            public void notifyStart(Long id) {
+
+            }
+
+            @Override
             public void notifySuccess(Long id, String hex) {
                 assertEquals(expectedHex, hex);
                 assertEquals(expectedId, id);
@@ -102,6 +107,11 @@ public class DigestRecursiveActionTest {
 
     private JobStatusListener getErrorStatusListener(String expectedStackTracePart, Long expectedId) {
         return new JobStatusListener() {
+            @Override
+            public void notifyStart(Long id) {
+
+            }
+
             @Override
             public void notifySuccess(Long id, String hex) {
                 assertTrue(false);
@@ -153,6 +163,11 @@ public class DigestRecursiveActionTest {
 
     private JobStatusListener getEmptyListener() {
         return new JobStatusListener() {
+            @Override
+            public void notifyStart(Long id) {
+
+            }
+
             @Override
             public void notifySuccess(Long id, String hex) {
 

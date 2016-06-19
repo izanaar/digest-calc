@@ -34,11 +34,16 @@ public class JobService implements JobStatusListener {
         return null;
     }
 
-    public Job cancel(Long id) throws JobServiceException {
-        return null;
+    public void cancel(Long id) throws JobServiceException {
+
     }
 
     public void delete(Long id)  throws JobServiceException {
+
+    }
+
+    @Override
+    public void notifyStart(Long id) {
 
     }
 

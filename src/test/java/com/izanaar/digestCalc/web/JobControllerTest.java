@@ -178,12 +178,7 @@ public class JobControllerTest {
 
     @Test
     public void testSuccessfulCancel() throws Exception {
-        Job outgoingJob = new Job(id, uuid, Algo.MD5, testUrl);
-        outgoingJob.setStatus(JobStatus.CANCELLED);
-
-        ApiResponse<Job> response = new ApiResponse<>(true, outgoingJob);
-
-        when(jobService.cancel(id)).thenReturn(outgoingJob);
+        ApiResponse<Job> response = new ApiResponse<>(true);
 
         mockMvc
                 .perform(get("/job/cancel").param("id", id.toString()))

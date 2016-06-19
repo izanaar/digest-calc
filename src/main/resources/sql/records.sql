@@ -13,7 +13,3 @@ VALUES
 INSERT INTO jobs (id, algo, status, srcUrl, uuid)
 VALUES
   (4, 'SHA256', 'FAILED', 'file:///opt/file', '51512612626qwrar16');
-
-INSERT INTO jobs (id, algo, status, srcUrl, uuid)
-VALUES
-  (5, 'SHA256', 'CANCELLED', 'file:///opt/file', '512512261262616');

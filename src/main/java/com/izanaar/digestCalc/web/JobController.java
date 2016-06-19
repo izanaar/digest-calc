@@ -47,8 +47,8 @@ public class JobController {
         ApiResponse<?> response;
 
         try{
-            Job responseJob = taskService.cancel(id);
-            response = new ApiResponse<>(true, responseJob);
+            taskService.cancel(id);
+            response = new ApiResponse<>(true);
         } catch (Exception e) {
             response = new ApiResponse<>(e.getMessage(), false, id);
         }

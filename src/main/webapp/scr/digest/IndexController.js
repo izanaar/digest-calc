@@ -10,4 +10,14 @@ function indexController($scope, $uibModal, jobService, Notification) {
     });
 
     Notification.success("Success!");
+    
+    function assignFunctionsToScope() {
+        $scope.isAbleToCancel = isAbleToCancel;
+    }
+    
+    function isAbleToCancel(status) {
+        return (status === "WAITING") || (status === "PENDING");
+    }
+    
+    assignFunctionsToScope();
 }
