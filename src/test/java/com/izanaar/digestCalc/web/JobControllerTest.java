@@ -159,7 +159,7 @@ public class JobControllerTest {
         ApiResponse expectedResponse = new ApiResponse(true);
 
         mockMvc
-                .perform(delete("/job").param("id", id.toString()))
+                .perform(delete("/job/" + id.toString()))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)))
                 .andExpect(status().isOk());
@@ -174,7 +174,7 @@ public class JobControllerTest {
         doThrow(exception).when(jobService).delete(id);
 
         mockMvc
-                .perform(delete("/job").param("id", id.toString()))
+                .perform(delete("/job/" + id.toString()))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(content().json(objectMapper.writeValueAsString(response)))
                 .andExpect(status().isOk());

@@ -6,10 +6,7 @@ import com.izanaar.digestCalc.repository.enums.JobStatus;
 import com.izanaar.digestCalc.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -59,8 +56,8 @@ public class JobController {
         return response;
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
-    public @ResponseBody ApiResponse<?> deleteJob(Long id){
+    @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
+    public @ResponseBody ApiResponse<?> deleteJob(@PathVariable Long id){
         ApiResponse<?> response;
 
         try{
