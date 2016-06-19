@@ -16,13 +16,16 @@ public class Job {
     @GeneratedValue
     private Long id;
 
+    @Column(nullable = false)
     private String uuid;
 
     @NotNull
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Algo algo;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private JobStatus status;
 
     private Date startDate;
@@ -30,6 +33,7 @@ public class Job {
     private Date endDate;
 
     @NotNull
+    @Column(nullable = false)
     private URL srcUrl;
 
     private String stackTrace;

@@ -45,6 +45,7 @@ public class DigestRecursiveAction extends RecursiveAction {
     protected void compute() {
         logger.trace("Hex calculation for task {} has started.", jobId);
         operationStarted.set(true);
+        statusListener.notifyStart(jobId);
         try {
             InputStream stream = source.openStream();
             byte[] bytes = readStream(stream);
