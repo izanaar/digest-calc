@@ -47,7 +47,7 @@ public class JobService implements JobStatusListener {
     public Job add(Job job) {
         job.setStatus(JobStatus.WAITING);
         RecursiveAction action = factory.getRecursiveAction(job);
-
+        job.setUuid(uuidKeeper.getValue());
         jobRepository.save(job);
         executionService.executeAction(action, job.getId());
 

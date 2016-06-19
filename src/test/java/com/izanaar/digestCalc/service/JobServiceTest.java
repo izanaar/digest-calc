@@ -30,6 +30,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JobServiceTest {
+
     @Mock
     private UUIDKeeper uuidKeeper;
 
@@ -51,8 +52,6 @@ public class JobServiceTest {
     private Logger logger;
 
     private List<Job> jobList;
-
-    private String uuid;
 
     private URL url;
 
@@ -94,9 +93,11 @@ public class JobServiceTest {
         when(job.getId()).thenReturn(5L);
         DigestRecursiveAction recursiveAction = mock(DigestRecursiveAction.class);
         when(factory.getRecursiveAction(job)).thenReturn(recursiveAction);
+        when(uuidKeeper.getValue()).thenReturn("Orgrim Doomhammer");
 
         assertEquals(job, jobService.add(job));
 
+        verify(job).setUuid("Orgrim Doomhammer");
         verify(factory, times(1)).getRecursiveAction(job);
         verify(executionService).executeAction(recursiveAction, 5L);
         verify(job).setStatus(JobStatus.WAITING);
