@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.net.URL;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,7 +73,7 @@ public class JobServiceTest {
 
     @Test
     public void testGetAllTasks() throws Exception {
-        when(jobRepository.findAll()).thenReturn(jobList);
+        when(jobRepository.findByUuid(anyString())).thenReturn(jobList);
 
         assertEquals(jobList, jobService.getAll());
     }

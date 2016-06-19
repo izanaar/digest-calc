@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
+import java.util.stream.Collectors;
 
 @Service
 public class JobService implements JobStatusListener {
@@ -38,11 +39,11 @@ public class JobService implements JobStatusListener {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public List<Job> getAll() {
-        return jobRepository.findAll();
+        return jobRepository.findByUuid(uuidKeeper.getValue());
     }
 
     public Job getById(Long id) {
-        return jobRepository.findOne(id);
+        return jobRepository.findOneByIdAndUuid(id, uuidKeeper.getValue());
     }
 
     public Job add(Job job) {
@@ -56,7 +57,7 @@ public class JobService implements JobStatusListener {
     }
 
     public void cancel(Long id) {
-        Optional<Job> jobOptional = Optional.ofNullable(jobRepository.findOne(id));
+        Optional<Job> jobOptional = Optional.ofNullable(jobRepository.findOneByIdAndUuid(id, uuidKeeper.getValue()));
         if(jobOptional.isPresent()){
             tryCancelJob(jobOptional.get());
         }else {
@@ -77,7 +78,7 @@ public class JobService implements JobStatusListener {
     }
 
     public void delete(Long id) {
-        Optional<Job> jobOptional = Optional.ofNullable(jobRepository.findOne(id));
+        Optional<Job> jobOptional = Optional.ofNullable(jobRepository.findOneByIdAndUuid(id, uuidKeeper.getValue()));
         jobOptional.orElseThrow(() -> new JobServiceException("Invalid id."));
 
         Job job = jobOptional.get();

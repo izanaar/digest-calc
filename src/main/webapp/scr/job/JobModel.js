@@ -1,4 +1,4 @@
-function jobModel($http, Notification) {
+function jobModel($http, $interval, Notification) {
 
     var jobs = [],
         algos = [];
@@ -19,6 +19,8 @@ function jobModel($http, Notification) {
             apiResponse.content.forEach(function (job) {
                 jobs.push(job);
             });
+
+            $interval(updateModel, 1000 * 10);
 
             console.log("job list has been updated. count: " + apiResponse.content.length);
         } else {
@@ -54,13 +56,27 @@ function jobModel($http, Notification) {
         updateModel();
     };
 
-    this.updateJob = function (id) {
-        Notification.primary("Update job " + id + ".");
+    this.cancelJob = function (id) {
+        $http.get("/job/cancel/", {
+            params: {
+                id: id
+            }
+        }).then(cancelJobSuccessCallback, cancelJobFailureCallback);
     };
 
-    this.cancelJob = function (id) {
-        Notification.primary("Cancel job" + id + ".")
-    };
+    function cancelJobSuccessCallback(response) {
+        var apiResponse = response.data;
+        if (apiResponse.status) {
+            updateModel();
+            Notification.success("Job has been cancelled.");
+        } else {
+            Notification.error("Couldn't delete job. " + apiResponse.message);
+        }
+    }
+
+    function cancelJobFailureCallback(response) {
+        Notification.error("Error" + response.status + " occurred while cancelling job.");
+    }
 
     this.deleteJob = function (id) {
         var url = "/job/" + id;
@@ -72,6 +88,7 @@ function jobModel($http, Notification) {
         var apiResponse = response.data;
         if (apiResponse.status) {
             updateModel();
+            Notification.success("Job has been deleted.");
         } else {
             Notification.error("Couldn't delete job. " + apiResponse.message);
         }
@@ -97,15 +114,6 @@ function jobModel($http, Notification) {
 
     function addJobFailureCallback(error) {
         Notification.error("Error" + error.status + " occurred while adding job.");
-    }
-
-    function getJobIndex(jobId) {
-        for (var i = 0; i < jobs.length; i++) {
-            if (jobs[i].id === jobId) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     this.getAlgos = function () {

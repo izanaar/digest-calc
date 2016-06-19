@@ -39,7 +39,7 @@
                     <th>End date</th>
                     <th>Src url</th>
                     <th>Hex</th>
-                    <th colspan="2"></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -51,9 +51,6 @@
                     <td>{{job.endDate | date:'medium'}}</td>
                     <td>{{job.srcUrl}}</td>
                     <td>{{job.hex}}</td>
-                    <td>
-                        <button class="btn btn-primary btn-block" ng-click="updateJob(job.id)">Update</button>
-                    </td>
                     <td>
                         <button class="btn btn-danger btn-block"
                                 ng-show="!isAbleToCancel(job.status)"

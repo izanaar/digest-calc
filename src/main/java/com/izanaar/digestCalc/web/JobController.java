@@ -2,7 +2,6 @@ package com.izanaar.digestCalc.web;
 
 import com.izanaar.digestCalc.repository.entity.Job;
 import com.izanaar.digestCalc.repository.enums.Algo;
-import com.izanaar.digestCalc.repository.enums.JobStatus;
 import com.izanaar.digestCalc.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,16 +15,16 @@ import java.util.List;
 public class JobController {
 
     @Autowired
-    private JobService taskService;
+    private JobService jobService;
 
     @RequestMapping("/all")
     public @ResponseBody ApiResponse<List<Job>> getAll(){
-        return new ApiResponse<>(true, taskService.getAll());
+        return new ApiResponse<>(true, jobService.getAll());
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public @ResponseBody ApiResponse<Job> getJob(Long id){
-        return new ApiResponse<>(true, taskService.getById(id));
+        return new ApiResponse<>(true, jobService.getById(id));
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -33,7 +32,7 @@ public class JobController {
         ApiResponse<?> response;
 
         try{
-            Job addedJob = taskService.add(job);
+            Job addedJob = jobService.add(job);
             response = new ApiResponse<>(true, addedJob);
         }catch (Exception e){
             response = new ApiResponse<>(e.getMessage(), false, job);
@@ -47,7 +46,7 @@ public class JobController {
         ApiResponse<?> response;
 
         try{
-            taskService.cancel(id);
+            jobService.cancel(id);
             response = new ApiResponse<>(true);
         } catch (Exception e) {
             response = new ApiResponse<>(e.getMessage(), false, id);
@@ -61,7 +60,7 @@ public class JobController {
         ApiResponse<?> response;
 
         try{
-            taskService.delete(id);
+            jobService.delete(id);
             response = new ApiResponse<>(true);
         }catch (Exception e){
             response = new ApiResponse<>(e.getMessage(), false, id);
