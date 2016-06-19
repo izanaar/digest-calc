@@ -14,19 +14,19 @@
 
     <script src="/bower_components/angular-ui-notification/dist/angular-ui-notification.js"></script>
 
-    <script src="/scr/digest/IndexController.js" type="text/javascript"></script>
-    <script src="/scr/digest/JobService.js" type="text/javascript"></script>
-    <script src="/scr/digest/AddJobModalController.js" type="text/javascript"></script>
+    <script src="/scr/job/JobModel.js" type="text/javascript"></script>
+    <script src="/scr/job/JobController.js" type="text/javascript"></script>
+    <script src="/scr/job/AddJobModalController.js" type="text/javascript"></script>
     <script src="/scr/app.js" type="text/javascript"></script>
 </head>
 <body ng-app="jobTrackerApp">
 
-<div class="container content" ng-controller="indexController">
+<div class="container content" ng-controller="jobController">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4 class="col-md-10">Current jobs:</h4>
-            <button class="btn btn-success">New job</button>
-            <button class="btn btn-primary">Update</button>
+            <button class="btn btn-success" ng-click="openJobAddingModal()">New job</button>
+            <button class="btn btn-primary" ng-click="updateJobs()">Update</button>
         </div>
         <div class="panel-body">
             <table class="table">
@@ -50,11 +50,16 @@
                     <td>{{job.endDate}}</td>
                     <td>{{job.srcUrl}}</td>
                     <td>
-                        <button class="btn btn-primary btn-block">Update</button>
+                        <button class="btn btn-primary btn-block" ng-click="updateJob(job.id)">Update</button>
                     </td>
                     <td>
-                        <button class="btn btn-danger btn-block" ng-show="!isAbleToCancel(job.status)">Delete</button>
-                        <button class="btn btn-danger btn-block" ng-show="isAbleToCancel(job.status)">Cancel</button>
+                        <button class="btn btn-danger btn-block"
+                                ng-show="!isAbleToCancel(job.status)"
+                                ng-click="deleteJob(job.id)">Delete</button>
+
+                        <button class="btn btn-danger btn-block"
+                                ng-show="isAbleToCancel(job.status)"
+                                ng-click="cancelJob(job.id)">Cancel</button>
                     </td>
                 </tr>
                 </tbody>

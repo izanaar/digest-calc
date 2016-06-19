@@ -1,9 +1,12 @@
 package com.izanaar.digestCalc.web;
 
 import com.izanaar.digestCalc.repository.entity.Job;
+import com.izanaar.digestCalc.repository.enums.Algo;
+import com.izanaar.digestCalc.repository.enums.JobStatus;
 import com.izanaar.digestCalc.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -29,7 +32,7 @@ public class JobController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody ApiResponse<?> addJob(@Valid Job job){
+    public @ResponseBody ApiResponse<?> addJob(@Valid @RequestBody Job job){
         ApiResponse<?> response;
 
         try{
@@ -70,4 +73,8 @@ public class JobController {
         return response;
     }
 
+    @RequestMapping("/algos")
+    public @ResponseBody ApiResponse<?> getAlgos(){
+        return new ApiResponse<>(true, Algo.values());
+    }
 }

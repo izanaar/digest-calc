@@ -28,6 +28,7 @@ import java.util.UUID;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -103,8 +104,8 @@ public class JobControllerTest {
 
         mockMvc
                 .perform(post("/job")
-                        .param("algo", incomingJob.getAlgo().toString())
-                        .param("srcUrl", incomingJob.getSrcUrl().toString()))
+                            .content(objectMapper.writeValueAsString(incomingJob))
+                            .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(content().string(objectMapper.writeValueAsString(jobApiResponse)));
@@ -113,7 +114,7 @@ public class JobControllerTest {
     @Test
     public void testFailedAddingJob() throws Exception {
         Job incomingJob = new Job(Algo.MD5, testUrl);
-        String message = "Something went wrong.";
+        String message = "Something went wrong";
 
         ApiResponse<Job> jobApiResponse = new ApiResponse<>(message, false, incomingJob);
 
@@ -121,8 +122,8 @@ public class JobControllerTest {
 
         mockMvc
                 .perform(post("/job")
-                        .param("algo", incomingJob.getAlgo().toString())
-                        .param("srcUrl", incomingJob.getSrcUrl().toString()))
+                        .content(objectMapper.writeValueAsString(incomingJob))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(content().string(objectMapper.writeValueAsString(jobApiResponse)));
@@ -130,23 +131,26 @@ public class JobControllerTest {
 
     @Test
     public void testJobConstraints() throws Exception {
-        Algo algo = Algo.SHA256;
-        URL url = new URL("file:///opt/web/file.txt");
-
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        Job job = new Job();
 
         mockMvc
-                .perform(post("/job").params(params))
+                .perform(post("/job")
+                        .content(objectMapper.writeValueAsString(job))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
-        params.add("algo", algo.toString());
+        job.setAlgo(Algo.SHA256);
         mockMvc
-                .perform(post("/job").params(params))
+                .perform(post("/job")
+                        .content(objectMapper.writeValueAsString(job))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
-        params.add("srcUrl", url.toString());
+        job.setSrcUrl(new URL("file:///opt/x2"));
         mockMvc
-                .perform(post("/job").params(params))
+                .perform(post("/job")
+                        .content(objectMapper.writeValueAsString(job))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
@@ -202,6 +206,17 @@ public class JobControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void testGetAlgos() throws Exception {
+        ApiResponse<Object[]> expectedResponse = new ApiResponse<>(true, Algo.values());
+
+        mockMvc
+                .perform(get("/job/algos"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().string(objectMapper.writeValueAsString(expectedResponse)))
+                .andExpect(status().isOk());
+
+    }
 
     private ResultMatcher contentTypeJSON() {
         return content().contentType(MediaType.APPLICATION_JSON_UTF8);

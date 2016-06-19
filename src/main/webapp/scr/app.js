@@ -4,7 +4,7 @@ var digestApp = angular.module('jobTrackerApp',[
 ]);
 
 
-digestApp.controller('indexController', ['$scope', '$uibModal', 'jobService', 'Notification', indexController]);
-digestApp.controller('addTaskModalController', ['$scope', 'jobService', addTaskModalController]);
+digestApp.controller('jobController', ['$scope', '$uibModal', 'jobModel', jobController]);
+digestApp.controller('addJobModalController', ['$scope', '$uibModalInstance','jobModel', addJobModalController]);
 
-digestApp.service('jobService', ['$http', jobService]);
+digestApp.service('jobModel', ['$http','Notification', jobModel]);
