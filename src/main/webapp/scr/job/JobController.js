@@ -12,6 +12,7 @@ function jobController($scope, $uibModal, jobModel) {
         $scope.updateJob = jobModel.updateJob;
         $scope.cancelJob = jobModel.cancelJob;
         $scope.deleteJob = jobModel.deleteJob;
+        $scope.showStackTrace = showStackTrace;
     }
 
     function isAbleToCancel(status) {
@@ -24,7 +25,18 @@ function jobController($scope, $uibModal, jobModel) {
             templateUrl: '/new_job_modal'
         });
     }
-
+    
+    function showStackTrace(job) {
+        $uibModal.open({
+            templateUrl: '/stack_trace_modal',
+            controller: 'stackModalController',
+            size:'lg',
+            resolve: {
+                job: job
+            }
+        });
+    }
+    
     initController();
     assignFunctionsToScope();
 }

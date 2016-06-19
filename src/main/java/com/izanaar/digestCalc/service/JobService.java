@@ -122,6 +122,7 @@ public class JobService implements JobStatusListener {
         if(jobOptional.isPresent()){
             Job job = jobOptional.get();
             job.setStatus(JobStatus.FAILED);
+            job.setStackTrace(stackTrace);
             job.setEndDate(new Date());
             jobRepository.save(job);
         }else{

@@ -4,6 +4,7 @@ function jobModel($http, $interval, Notification) {
         algos = [];
 
     updateModel();
+    $interval(updateModel, 1000 * 10);
     updateAlgos();
 
     function updateModel() {
@@ -20,7 +21,6 @@ function jobModel($http, $interval, Notification) {
                 jobs.push(job);
             });
 
-            $interval(updateModel, 1000 * 10);
 
             console.log("job list has been updated. count: " + apiResponse.content.length);
         } else {
@@ -44,7 +44,7 @@ function jobModel($http, $interval, Notification) {
     }
 
     function getAlgosFailureCalback(error) {
-        Notification.error("Error" + error.status + " occurred while getting algos list.");
+        Notification.error("Error " + error.status + " occurred while getting algos list.");
     }
 
 
@@ -95,7 +95,7 @@ function jobModel($http, $interval, Notification) {
     }
 
     function deleteJobFailureCallback(response) {
-        Notification.error("Error" + response.status + " occurred while deleting job.");
+        Notification.error("Error " + response.status + " occurred while deleting job.");
     }
 
     this.addJob = function (newJob) {
@@ -113,7 +113,7 @@ function jobModel($http, $interval, Notification) {
     }
 
     function addJobFailureCallback(error) {
-        Notification.error("Error" + error.status + " occurred while adding job.");
+        Notification.error("Error " + error.status + " occurred while adding job.");
     }
 
     this.getAlgos = function () {

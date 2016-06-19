@@ -38,6 +38,8 @@ public class Job {
     @Column(nullable = false)
     private URL srcUrl;
 
+    @Lob
+    @Column(length=1024)
     private String stackTrace;
 
     public Job() {

@@ -1,4 +1,23 @@
 <configuration>
+
+    <property name="log.folder" value="${catalina.home}"/>
+
+    <appender name="compute-file" class="ch.qos.logback.core.FileAppender">
+        <file>${log.folder}/logs/digest-manager/digest-compute.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - (%msg%n)</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="root-file" class="ch.qos.logback.core.FileAppender">
+        <file>${log.folder}/logs/digest-manager/root.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - (%msg%n)</pattern>
+        </encoder>
+    </appender>
+
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %cyan(%msg%n)</pattern>
@@ -7,10 +26,11 @@
 
     <logger name="DigestCalcLogger" level="trace" additivity="false">
         <appender-ref ref="STDOUT"/>
+        <appender-ref ref="compute-file"/>
     </logger>
-
 
     <root level="info">
         <appender-ref ref="STDOUT"/>
+        <appender-ref ref="root-file"/>
     </root>
 </configuration>
