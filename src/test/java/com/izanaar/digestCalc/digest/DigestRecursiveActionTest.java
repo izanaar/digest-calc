@@ -33,7 +33,7 @@ public class DigestRecursiveActionTest {
 
         delayPerformer = (array) -> {
             try {
-                Thread.sleep(200);
+                Thread.sleep(300);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -108,15 +108,15 @@ public class DigestRecursiveActionTest {
 
         DigestRecursiveAction cancelledTask = tasks.get(1);
         assertTrue(cancelledTask.cancel(true));
-        Thread.sleep(700);
+        Thread.sleep(800);
 
         DigestRecursiveAction completedTask = tasks.get(2);
-        assertTrue(completedTask.isCompletedNormally() && completedTask.isDone());
 
         assertTrue(cancellableTask.isDone() && cancellableTask.isCompletedNormally());
 
         assertTrue(cancelledTask.isDone() && cancelledTask.isCompletedAbnormally());
 
+        assertTrue(completedTask.isCompletedNormally() && completedTask.isDone());
 
     }
 

@@ -50,6 +50,8 @@ public class JobServiceTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
+    private String uuid;
+
     private Logger logger;
 
     private List<Job> jobList;
@@ -63,6 +65,10 @@ public class JobServiceTest {
                 .limit(1)
                 .collect(Collectors.toList());
         url = new URL("file:///opt/file");
+
+        uuid = "Orgrimm Doomhammer";
+        when(uuidKeeper.getValue()).thenReturn(uuid);
+
         logger = mock(Logger.class);
         ReflectionTestUtils.setField(jobService, "logger", logger);
     }
@@ -83,7 +89,7 @@ public class JobServiceTest {
         Long id = 2L;
         Job job = new Job(Algo.MD5, url);
 
-        when(jobRepository.findOne(id)).thenReturn(job);
+        when(jobRepository.findOneByIdAndUuid(id, uuid)).thenReturn(job);
 
         assertEquals(job, jobService.getById(id));
     }
@@ -110,7 +116,7 @@ public class JobServiceTest {
         Job job = new Job(5L, "aggqweq", Algo.SHA256, url);
         job.setStatus(JobStatus.WAITING);
 
-        when(jobRepository.findOne(job.getId())).thenReturn(job);
+        when(jobRepository.findOneByIdAndUuid(job.getId(), uuid)).thenReturn(job);
 
         when(executionService.tryCancelActionExecutuion(job.getId())).thenReturn(true);
 
@@ -127,7 +133,7 @@ public class JobServiceTest {
 
         Long id = 5L;
 
-        when(jobRepository.findOne(id)).thenReturn(job);
+        when(jobRepository.findOneByIdAndUuid(id, uuid)).thenReturn(job);
         thrown.expect(JobServiceException.class);
         thrown.expectMessage("Couldn't cancel job that has already been done.");
         jobService.cancel(id);
@@ -140,7 +146,7 @@ public class JobServiceTest {
 
         Long id = 5L;
 
-        when(jobRepository.findOne(id)).thenReturn(job);
+        when(jobRepository.findOneByIdAndUuid(id, uuid)).thenReturn(job);
         thrown.expect(JobServiceException.class);
         thrown.expectMessage("Job processing has already been started.");
         jobService.cancel(id);
@@ -158,7 +164,7 @@ public class JobServiceTest {
         Job job = new Job(5L, "aggqweq", Algo.SHA256, url);
         job.setStatus(JobStatus.COMPLETED);
 
-        when(jobRepository.findOne(job.getId())).thenReturn(job);
+        when(jobRepository.findOneByIdAndUuid(job.getId(), uuid)).thenReturn(job);
 
         jobService.delete(job.getId());
 
@@ -171,7 +177,7 @@ public class JobServiceTest {
         job.setStatus(JobStatus.WAITING);
         String message = "Couldn't delete job with status " + JobStatus.WAITING + ".";
 
-        when(jobRepository.findOne(job.getId())).thenReturn(job);
+        when(jobRepository.findOneByIdAndUuid(job.getId(), uuid)).thenReturn(job);
 
         thrown.expect(JobServiceException.class);
         thrown.expectMessage(message);

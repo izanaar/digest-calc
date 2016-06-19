@@ -40,7 +40,11 @@ public class DigestRecursiveAction extends RecursiveAction {
 
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
-        return !operationStarted.get() && super.cancel(mayInterruptIfRunning);
+        if(operationStarted.get()){
+            return false;
+        }else{
+            return super.cancel(mayInterruptIfRunning);
+        }
     }
 
     @Override
@@ -52,7 +56,6 @@ public class DigestRecursiveAction extends RecursiveAction {
             InputStream stream = source.openStream();
             byte[] bytes = readStream(stream);
             String hex = performer.apply(bytes);
-            TimeUnit.SECONDS.sleep(10);
             logger.trace("Hex calculation for task {} has ended.", jobId);
             statusListener.notifySuccess(jobId, hex);
         } catch (Exception e) {
