@@ -13,9 +13,13 @@ public class IndexController {
     @Autowired
     private JobService taskService;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping
     public String index() {
         return "index";
     }
 
+    @RequestMapping("/new_job_modal")
+    public String addJobModal(){
+        return "add-job-modal";
+    }
 }

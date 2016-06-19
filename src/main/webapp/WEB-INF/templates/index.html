@@ -50,11 +50,11 @@
                     <td>{{job.endDate}}</td>
                     <td>{{job.srcUrl}}</td>
                     <td>
-                        <button class="btn btn-primary">Update</button>
+                        <button class="btn btn-primary btn-block">Update</button>
                     </td>
                     <td>
-                        <button class="btn btn-danger" ng-show="!isAbleToCancel(job.status)">Delete</button>
-                        <button class="btn btn-danger" ng-show="isAbleToCancel(job.status)">Cancel</button>
+                        <button class="btn btn-danger btn-block" ng-show="!isAbleToCancel(job.status)">Delete</button>
+                        <button class="btn btn-danger btn-block" ng-show="isAbleToCancel(job.status)">Cancel</button>
                     </td>
                 </tr>
                 </tbody>
