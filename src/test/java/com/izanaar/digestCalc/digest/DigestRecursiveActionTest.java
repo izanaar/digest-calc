@@ -2,6 +2,7 @@ package com.izanaar.digestCalc.digest;
 
 import org.h2.util.IOUtils;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
@@ -14,9 +15,10 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 public class DigestRecursiveActionTest {
 
@@ -50,30 +52,11 @@ public class DigestRecursiveActionTest {
         URL url = createTestUrl(testContent);
 
 
-        JobStatusListener statusListener = getSuccessStatusListener(testContent, testTaskID);
+        JobStatusListener statusListener = mock(JobStatusListener.class);
 
         DigestRecursiveAction task = new DigestRecursiveAction(performer, url, statusListener, testTaskID);
         task.compute();
-    }
-
-    private JobStatusListener getSuccessStatusListener(String expectedHex, Long expectedId) {
-        return new JobStatusListener() {
-            @Override
-            public void notifyStart(Long id) {
-
-            }
-
-            @Override
-            public void notifySuccess(Long id, String hex) {
-                assertEquals(expectedHex, hex);
-                assertEquals(expectedId, id);
-            }
-
-            @Override
-            public void notifyFailure(Long id, String stackTrace) {
-                assertTrue(false);
-            }
-        };
+        verify(statusListener).notifySuccess(testTaskID, testContent);
     }
 
     private URL createTestUrl(String testContent) throws IOException {
@@ -99,38 +82,20 @@ public class DigestRecursiveActionTest {
         Function<byte[], String> performer = String::new;
 
 
-        JobStatusListener statusListener = getErrorStatusListener("FileNotFoundException", testTaskId);
+        JobStatusListener statusListener = mock(JobStatusListener.class);
 
         DigestRecursiveAction task = new DigestRecursiveAction(performer, url, statusListener, testTaskId);
         task.invoke();
+        verify(statusListener).notifyFailure(eq(testTaskId), Matchers.contains("FileNotFoundException"));
     }
 
-    private JobStatusListener getErrorStatusListener(String expectedStackTracePart, Long expectedId) {
-        return new JobStatusListener() {
-            @Override
-            public void notifyStart(Long id) {
-
-            }
-
-            @Override
-            public void notifySuccess(Long id, String hex) {
-                assertTrue(false);
-            }
-
-            @Override
-            public void notifyFailure(Long id, String stackTrace) {
-                assertEquals(expectedId, id);
-                assertTrue(stackTrace.contains(expectedStackTracePart));
-            }
-        };
-    }
 
     @Test
     public void testCancel() throws Exception {
         UnaryOperator<DigestRecursiveAction> streamIterateOperator = this::iterateOperator;
 
         List<DigestRecursiveAction> tasks = Stream
-                .iterate(new DigestRecursiveAction(delayPerformer, fileUrl, getEmptyListener(), 1L), streamIterateOperator)
+                .iterate(new DigestRecursiveAction(delayPerformer, fileUrl, mock(JobStatusListener.class), 1L), streamIterateOperator)
                 .limit(3)
                 .collect(Collectors.toList());
 
@@ -157,26 +122,7 @@ public class DigestRecursiveActionTest {
 
     private DigestRecursiveAction iterateOperator(DigestRecursiveAction oldTask) {
         Long oldId = (Long) ReflectionTestUtils.getField(oldTask, DigestRecursiveAction.class, "jobId");
-        DigestRecursiveAction newTask = new DigestRecursiveAction(delayPerformer, fileUrl, getEmptyListener(), ++oldId);
-        return newTask;
+        return new DigestRecursiveAction(delayPerformer, fileUrl, mock(JobStatusListener.class), ++oldId);
     }
 
-    private JobStatusListener getEmptyListener() {
-        return new JobStatusListener() {
-            @Override
-            public void notifyStart(Long id) {
-
-            }
-
-            @Override
-            public void notifySuccess(Long id, String hex) {
-
-            }
-
-            @Override
-            public void notifyFailure(Long id, String stackTrace) {
-
-            }
-        };
-    }
 }
