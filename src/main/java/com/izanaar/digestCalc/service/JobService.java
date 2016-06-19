@@ -55,7 +55,24 @@ public class JobService implements JobStatusListener {
     }
 
     public void cancel(Long id) {
+        Optional<Job> jobOptional = Optional.ofNullable(jobRepository.findOne(id));
+        if(jobOptional.isPresent()){
+            tryCancelJob(jobOptional.get());
+        }else {
+            throw new JobServiceException("Job not found. Invalid id.");
+        }
+    }
 
+    private void tryCancelJob(Job job) {
+        if (job.getStatus().equals(JobStatus.FAILED) || job.getStatus().equals(JobStatus.COMPLETED)){
+            throw new JobServiceException("Couldn't cancel job that has already been done.");
+        }else {
+            if(job.getStatus().equals(JobStatus.PENDING) || !executionService.tryCancelActionExecutuion(job.getId())){
+                throw new JobServiceException("Job processing has already been started.");
+            }else{
+                jobRepository.delete(job);
+            }
+        }
     }
 
     public void delete(Long id) {
@@ -79,7 +96,7 @@ public class JobService implements JobStatusListener {
             job.setStartDate(new Date());
             jobRepository.save(job);
         }else{
-            logger.error("Digest calc has started for job that does not exist. ID: {}", id);
+            logger.error("Digest calculation has started for job that does not exist. ID: {}", id);
         }
     }
 
@@ -92,7 +109,7 @@ public class JobService implements JobStatusListener {
             job.setEndDate(new Date());
             jobRepository.save(job);
         }else{
-            logger.error("Digest calc has ended for job that does not exist. ID: {}", id);
+            logger.error("Digest calculation has ended for job that does not exist. ID: {}, hex: {}", id, hex);
         }
     }
 
@@ -105,7 +122,7 @@ public class JobService implements JobStatusListener {
             job.setEndDate(new Date());
             jobRepository.save(job);
         }else{
-            logger.error("Digest calc has failed for job that does not exist. ID: {}", id);
+            logger.error("Digest calculation has failed for job that does not exist. ID: {}, hex: {}", id, stackTrace);
         }
     }
 }

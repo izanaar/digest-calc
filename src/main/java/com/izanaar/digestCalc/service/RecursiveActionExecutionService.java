@@ -8,11 +8,11 @@ import java.util.concurrent.RecursiveAction;
 @Service
 public class RecursiveActionExecutionService {
 
-    void executeAction(RecursiveAction action, Long taskID){
+    void executeAction(RecursiveAction action, Long jobId){
 
     }
 
-    boolean tryCancelActionExecutuion(Long taskId){
+    boolean tryCancelActionExecutuion(Long jobId){
         return false;
     }
 }
