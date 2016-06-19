@@ -1,4 +1,4 @@
-<configuration  debug="true">
+<configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %cyan(%msg%n)</pattern>
@@ -6,7 +6,7 @@
     </appender>
 
     <logger name="com.izanaar.digestCalc.digest.DigestRecursiveAction" level="trace" additivity="false">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="STDOUT"/>
     </logger>
 
 

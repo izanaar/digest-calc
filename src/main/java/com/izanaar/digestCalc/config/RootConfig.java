@@ -2,6 +2,7 @@ package com.izanaar.digestCalc.config;
 
 import com.izanaar.digestCalc.config.data.DataSourcesConfig;
 import com.izanaar.digestCalc.config.data.JpaConfig;
+import com.izanaar.digestCalc.service.SecurityAspect;
 import com.izanaar.digestCalc.service.UUIDKeeper;
 import org.springframework.context.annotation.*;
 import org.springframework.web.context.WebApplicationContext;
@@ -19,11 +20,17 @@ import java.util.function.Supplier;
                 @ComponentScan.Filter(type = FilterType.ANNOTATION, value = EnableWebMvc.class)
         })
 @Import({DataSourcesConfig.class, JpaConfig.class})
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class RootConfig {
 
     @Bean
     public ForkJoinPool threadPoolExecutor() {
         return ForkJoinPool.commonPool();
+    }
+
+    @Bean
+    public SecurityAspect securityAspect(){
+        return new SecurityAspect();
     }
 
 }

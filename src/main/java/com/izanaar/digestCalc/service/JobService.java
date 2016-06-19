@@ -10,6 +10,7 @@ import com.izanaar.digestCalc.repository.enums.JobStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -46,9 +47,9 @@ public class JobService implements JobStatusListener {
 
     public Job add(Job job) {
         job.setStatus(JobStatus.WAITING);
+        job.setUuid(uuidKeeper.getValue());
         jobRepository.save(job);
         RecursiveAction action = factory.getRecursiveAction(job);
-        job.setUuid(uuidKeeper.getValue());
         executionService.executeAction(action, job.getId());
 
         return job;
