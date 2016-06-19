@@ -49,17 +49,14 @@ public class DigestRecursiveAction extends RecursiveAction {
 
     @Override
     protected void compute() {
-        logger.trace("Hex calculation for task {} has started.", jobId);
         operationStarted.set(true);
         statusListener.notifyStart(jobId);
         try {
             InputStream stream = source.openStream();
             byte[] bytes = readStream(stream);
             String hex = performer.apply(bytes);
-            logger.trace("Hex calculation for task {} has ended.", jobId);
             statusListener.notifySuccess(jobId, hex);
         } catch (Exception e) {
-            logger.error("Hex calculation for task {} has failed.", jobId);
             statusListener.notifyFailure(jobId, getStackTrace(e));
         }
     }
