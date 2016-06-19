@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.URL;
 import java.util.concurrent.RecursiveAction;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
@@ -23,6 +24,7 @@ public class DigestRecursiveAction extends RecursiveAction {
         this.source = source;
         this.statusListener = statusListener;
         this.jobId = jobId;
+        operationStarted = new AtomicBoolean(false);
     }
 
     public DigestRecursiveAction(Function<byte[], String> performer, URL source,
@@ -50,9 +52,10 @@ public class DigestRecursiveAction extends RecursiveAction {
             InputStream stream = source.openStream();
             byte[] bytes = readStream(stream);
             String hex = performer.apply(bytes);
+            TimeUnit.SECONDS.sleep(10);
             logger.trace("Hex calculation for task {} has ended.", jobId);
             statusListener.notifySuccess(jobId, hex);
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error("Hex calculation for task {} has failed.", jobId);
             statusListener.notifyFailure(jobId, getStackTrace(e));
         }

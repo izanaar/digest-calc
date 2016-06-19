@@ -32,6 +32,8 @@ public class Job {
 
     private Date endDate;
 
+    private String hex;
+
     @NotNull
     @Column(nullable = false)
     private URL srcUrl;
@@ -59,6 +61,21 @@ public class Job {
     }
 
     @Override
+    public String toString() {
+        return "Job{" +
+                "id=" + id +
+                ", uuid='" + uuid + '\'' +
+                ", algo=" + algo +
+                ", status=" + status +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", hex='" + hex + '\'' +
+                ", srcUrl=" + srcUrl +
+                ", stackTrace='" + stackTrace + '\'' +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -71,6 +88,7 @@ public class Job {
         if (status != job.status) return false;
         if (startDate != null ? !startDate.equals(job.startDate) : job.startDate != null) return false;
         if (endDate != null ? !endDate.equals(job.endDate) : job.endDate != null) return false;
+        if (hex != null ? !hex.equals(job.hex) : job.hex != null) return false;
         if (srcUrl != null ? !srcUrl.equals(job.srcUrl) : job.srcUrl != null) return false;
         return stackTrace != null ? stackTrace.equals(job.stackTrace) : job.stackTrace == null;
 
@@ -84,23 +102,10 @@ public class Job {
         result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
         result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
+        result = 31 * result + (hex != null ? hex.hashCode() : 0);
         result = 31 * result + (srcUrl != null ? srcUrl.hashCode() : 0);
         result = 31 * result + (stackTrace != null ? stackTrace.hashCode() : 0);
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Job{" +
-                "id=" + id +
-                ", uuid='" + uuid + '\'' +
-                ", algo=" + algo +
-                ", status=" + status +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", srcUrl=" + srcUrl +
-                ", stackTrace='" + stackTrace + '\'' +
-                '}';
     }
 
     public Long getId() {
@@ -165,5 +170,13 @@ public class Job {
 
     public void setStatus(JobStatus status) {
         this.status = status;
+    }
+
+    public String getHex() {
+        return hex;
+    }
+
+    public void setHex(String hex) {
+        this.hex = hex;
     }
 }

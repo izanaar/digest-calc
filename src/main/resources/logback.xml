@@ -5,6 +5,11 @@
         </encoder>
     </appender>
 
+    <logger name="com.izanaar.digestCalc.digest.DigestRecursiveAction" level="trace" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+
     <root level="info">
         <appender-ref ref="STDOUT"/>
     </root>

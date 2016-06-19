@@ -46,9 +46,9 @@ public class JobService implements JobStatusListener {
 
     public Job add(Job job) {
         job.setStatus(JobStatus.WAITING);
+        jobRepository.save(job);
         RecursiveAction action = factory.getRecursiveAction(job);
         job.setUuid(uuidKeeper.getValue());
-        jobRepository.save(job);
         executionService.executeAction(action, job.getId());
 
         return job;
@@ -105,6 +105,7 @@ public class JobService implements JobStatusListener {
         Optional<Job> jobOptional = Optional.ofNullable(jobRepository.findOne(id));
         if(jobOptional.isPresent()){
             Job job = jobOptional.get();
+            job.setHex(hex);
             job.setStatus(JobStatus.COMPLETED);
             job.setEndDate(new Date());
             jobRepository.save(job);

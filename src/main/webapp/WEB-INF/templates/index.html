@@ -21,7 +21,7 @@
 </head>
 <body ng-app="jobTrackerApp">
 
-<div class="container content" ng-controller="jobController">
+<div class="container-fluid content" ng-controller="jobController">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4 class="col-md-10">Current jobs:</h4>
@@ -38,6 +38,7 @@
                     <th>Start date</th>
                     <th>End date</th>
                     <th>Src url</th>
+                    <th>Hex</th>
                     <th colspan="2"></th>
                 </tr>
                 </thead>
@@ -46,9 +47,10 @@
                     <th>{{job.id}}</th>
                     <td>{{job.algo}}</td>
                     <td>{{job.status}}</td>
-                    <td>{{job.startDate}}</td>
-                    <td>{{job.endDate}}</td>
+                    <td>{{job.startDate | date:'medium'}}</td>
+                    <td>{{job.endDate | date:'medium'}}</td>
                     <td>{{job.srcUrl}}</td>
+                    <td>{{job.hex}}</td>
                     <td>
                         <button class="btn btn-primary btn-block" ng-click="updateJob(job.id)">Update</button>
                     </td>
